@@ -13,7 +13,7 @@ set(config_module_list
 	drivers/device
 	drivers/stm32
 	drivers/stm32/adc
-	drivers/stm32/tone_alarm
+#NOT ON HW	drivers/stm32/tone_alarm
 	drivers/led
 	drivers/px4fmu
 	drivers/boards/px4fmu-v5
@@ -41,14 +41,14 @@ set(config_module_list
 	drivers/mkblctrl
 	drivers/px4flow
 	drivers/oreoled
-	drivers/pwm_input
-	drivers/camera_trigger
+##HW NOT WIRED for	drivers/pwm_input
+##HW NOT WIRED for  drivers/camera_trigger
 	drivers/bst
 	drivers/snapdragon_rc_pwm
 	drivers/lis3mdl
 	drivers/bmp280
-	drivers/bma180
-	drivers/bmi160
+## BMA DEPENCANCY	drivers/bma180
+## BMA DEPENCANCY   	drivers/bmi160
 	drivers/tap_esc
 
 	#

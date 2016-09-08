@@ -131,25 +131,7 @@ __END_DECLS
  ************************************************************************************/
 __EXPORT void board_peripheral_reset(int ms)
 {
-	/* set the peripheral rails off */
-	stm32_configgpio(GPIO_PERIPH_3V3_EN);
-
-	stm32_gpiowrite(GPIO_PERIPH_3V3_EN, 0);
-
-	bool last = stm32_gpioread(GPIO_SPEKTRUM_PWR_EN);
-	/* Keep Spektum on to discharge rail*/
-	stm32_gpiowrite(GPIO_SPEKTRUM_PWR_EN, 1);
-
-	/* wait for the peripheral rail to reach GND */
-	usleep(ms * 1000);
-	warnx("reset done, %d ms", ms);
-
-	/* re-enable power */
-
-	/* switch the peripheral rail back on */
-	stm32_gpiowrite(GPIO_SPEKTRUM_PWR_EN, last);
-	stm32_gpiowrite(GPIO_PERIPH_3V3_EN, 1);
-
+//TODO:HW Needs this
 }
 
 /************************************************************************************
@@ -166,34 +148,20 @@ __EXPORT void
 stm32_boardinitialize(void)
 {
 	/* configure ADC pins */
-	stm32_configgpio(GPIO_ADC1_IN2);	/* BATT_VOLTAGE_SENS */
-	stm32_configgpio(GPIO_ADC1_IN3);	/* BATT_CURRENT_SENS */
-	stm32_configgpio(GPIO_ADC1_IN4);	/* VDD_5V_SENS */
-	stm32_configgpio(GPIO_ADC1_IN11);	/* RSSI analog in */
+	stm32_configgpio(GPIO_ADC1_IN0);	/* BATT_VOLTAGE_SENS */
+	stm32_configgpio(GPIO_ADC1_IN10);	/* VDD_5V_SENS */
+	stm32_configgpio(GPIO_ADC1_IN11);	/* VDD_3V3V_SENS */
 
-	/* configure power supply control/sense pins */
-	stm32_configgpio(GPIO_PERIPH_3V3_EN);
-	stm32_configgpio(GPIO_VDD_BRICK_VALID);
+	/* TODO:HW NEEDES THESE configure power supply control/sense pins */
+//	stm32_configgpio(GPIO_PERIPH_3V3_EN);
+//	stm32_configgpio(GPIO_VDD_BRICK_VALID);
 
-	stm32_configgpio(GPIO_SBUS_INV);
-	stm32_configgpio(GPIO_8266_GPIO0);
-	stm32_configgpio(GPIO_SPEKTRUM_PWR_EN);
-	stm32_configgpio(GPIO_8266_PD);
-	stm32_configgpio(GPIO_8266_RST);
-	stm32_configgpio(GPIO_BTN_SAFETY);
-
-#ifdef GPIO_RC_OUT
-	stm32_configgpio(GPIO_RC_OUT);      /* Serial RC output pin */
-	stm32_gpiowrite(GPIO_RC_OUT, 1);    /* set it high to pull RC input up */
-#endif
 
 	/* configure the GPIO pins to outputs and keep them low */
 	stm32_configgpio(GPIO_GPIO0_OUTPUT);
 	stm32_configgpio(GPIO_GPIO1_OUTPUT);
 	stm32_configgpio(GPIO_GPIO2_OUTPUT);
 	stm32_configgpio(GPIO_GPIO3_OUTPUT);
-	stm32_configgpio(GPIO_GPIO4_OUTPUT);
-	stm32_configgpio(GPIO_GPIO5_OUTPUT);
 
 	/* configure SPI interfaces */
 	stm32_spiinitialize();
