@@ -39,6 +39,7 @@ px4_add_module(
 		../common/board_name.c
 		../common/board_dma_alloc.c
 #		WIP px4fmu_can.c
+		px4fmu_pwr.c
 		px4fmu_init.c
 		px4fmu_sdio.c
 		px4fmu_timer_config.c

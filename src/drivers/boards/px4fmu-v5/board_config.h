@@ -73,7 +73,7 @@ __BEGIN_DECLS
 
 /*  Define the Chip Selects */
 
-#define GPIO_SPI_CS_IMU         /* PF10 J4-3 Unknown Dev */ (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_SET|GPIO_PORTF|GPIO_PIN10)
+#define GPIO_SPI_CS_IMU         /* PF10 J41-3 MPU6500    */ (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_SET|GPIO_PORTF|GPIO_PIN10)
 #define GPIO_SPI_CS_MS5611      /* PF3  U6-MS5607        */ (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_SET|GPIO_PORTF|GPIO_PIN3)
 
 #define GPIO_SPI_CS_DPS310      /* PF2 U2-DPS310         */ (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_SET|GPIO_PORTF|GPIO_PIN2)
@@ -121,7 +121,7 @@ __BEGIN_DECLS
 #define PX4_SPIDEV_ACCEL_MAG	 PX4_MK_SPI_SEL(PX4_SPI_BUS_SENSORS,1)
 #define PX4_SPIDEV_MPU			 PX4_MK_SPI_SEL(PX4_SPI_BUS_SENSORS,2)
 
-#define PX4_SENSOR_BUS_CS_GPIO   {0, GPIO_SPI_CS_IMU, 0}
+#define PX4_SENSOR_BUS_CS_GPIO   {0, 0, GPIO_SPI_CS_IMU}
 #define PX4_SENSORS_BUS_FIRST_CS PX4_SPIDEV_GYRO
 #define PX4_SENSORS_BUS_LAST_CS  PX4_SPIDEV_MPU
 
@@ -263,6 +263,11 @@ __BEGIN_DECLS
 
 #define BOARD_DMA_ALLOC_POOL_SIZE 5120
 
+#define MS_PWR_BUTTON_DOWN 200
+#define KEY_DETECT_GPIO        (GPIO_INPUT|GPIO_PULLDOWN|GPIO_EXTI|GPIO_PORTG|GPIO_PIN2)
+#define POWER_CONTROL_ON_GPIO  (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_SET|GPIO_PORTG|GPIO_PIN3)
+#define POWER_CONTROL_OFF_GPIO (GPIO_INPUT|GPIO_PULLDOWN|GPIO_PORTG|GPIO_PIN3)
+
 /****************************************************************************************************
  * Public Types
  ****************************************************************************************************/
@@ -332,6 +337,38 @@ extern void board_peripheral_reset(int ms);
 #ifdef CONFIG_NSH_LIBRARY
 int nsh_archinitialize(void);
 #endif
+
+/************************************************************************************
+ * Name: board_pwr_init()
+ *
+ * Description:
+ *   Called to configure power control for the board.
+ *
+ * Input Parameters:
+ *   stage- 0 for boot, 1 for board init
+ *
+ ************************************************************************************/
+
+void board_pwr_init(int stage);
+
+/****************************************************************************
+ * Name: board_pwr_button_down
+ *
+ * Description:
+ *   Called to Read the logical state of the power button
+ ****************************************************************************/
+
+bool board_pwr_button_down(void);
+
+/****************************************************************************
+ * Name: board_pwr
+ *
+ * Description:
+ *   Called to turn on or off the board
+ *
+ ****************************************************************************/
+
+void board_pwr(bool on_not_off);
 
 #include "../common/board_common.h"
 

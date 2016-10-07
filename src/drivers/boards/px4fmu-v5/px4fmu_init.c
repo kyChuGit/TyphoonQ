@@ -147,6 +147,10 @@ __EXPORT void board_peripheral_reset(int ms)
 __EXPORT void
 stm32_boardinitialize(void)
 {
+	/* Hold power state */
+
+	board_pwr_init(0);
+
 	/* configure ADC pins */
 	stm32_configgpio(GPIO_ADC1_IN0);	/* BATT_VOLTAGE_SENS */
 	stm32_configgpio(GPIO_ADC1_IN10);	/* VDD_5V_SENS */
@@ -243,6 +247,7 @@ __EXPORT int board_app_initialize(uintptr_t arg)
 		       ts_to_abstime(&ts),
 		       (hrt_callout)stm32_serial_dma_poll,
 		       NULL);
+	board_pwr_init(1);
 
 #if defined(CONFIG_STM32_BBSRAM)
 
