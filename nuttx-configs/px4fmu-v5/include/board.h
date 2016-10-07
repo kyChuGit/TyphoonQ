@@ -55,8 +55,9 @@
 /* Clocking *************************************************************************/
 /* The px4fmu-v5  board provides the following clock sources:
  *
- *   X1:  32.768 KHz crystal for LSE
- *   X2:  8 MHz crystal for HSE
+ *   X1:  32.768 KHz crystal for LSE (Not populated on P1)
+ *   X2:  16 MHz crystal for HSE (Listed as 8 MHz on schematic but populated on P1 with
+ *                                16 MHz)
  *
  * So we have these clock source available within the STM32
  *
@@ -66,7 +67,7 @@
  *   LSE: 32.768 kHz
  */
 
-#define STM32_BOARD_XTAL        8000000ul
+#define STM32_BOARD_XTAL        16000000ul
 
 #define STM32_HSI_FREQUENCY     16000000ul
 #define STM32_LSI_FREQUENCY     32000
@@ -75,7 +76,7 @@
 
 /* Main PLL Configuration.
  *
- * PLL source is HSE = 8,000,000
+ * PLL source is HSE = 16,000,000
  *
  * PLL_VCO = (STM32_HSE_FREQUENCY / PLLM) * PLLN
  * Subject to:
@@ -101,17 +102,17 @@
 
 /* Highest SYSCLK with USB OTG FS clock = 48 MHz
  *
- * PLL_VCO = (8,000,000 / 4) * 216 = 432 MHz
+ * PLL_VCO = (16,000,000 / 8) * 216 = 432 MHz
  * SYSCLK  = 432 MHz / 2 = 216 MHz
  * USB OTG FS, SDMMC and RNG Clock = 432 MHz / 9 = 48 MHz
  */
 
-#define STM32_PLLCFG_PLLM       RCC_PLLCFG_PLLM(4)
+#define STM32_PLLCFG_PLLM       RCC_PLLCFG_PLLM(8)
 #define STM32_PLLCFG_PLLN       RCC_PLLCFG_PLLN(216)
 #define STM32_PLLCFG_PLLP       RCC_PLLCFG_PLLP_2
 #define STM32_PLLCFG_PLLQ       RCC_PLLCFG_PLLQ(9)
 
-#define STM32_VCO_FREQUENCY     ((STM32_HSE_FREQUENCY / 4) * 216)
+#define STM32_VCO_FREQUENCY     ((STM32_HSE_FREQUENCY / 8) * 216)
 #define STM32_SYSCLK_FREQUENCY  (STM32_VCO_FREQUENCY / 2)
 #define STM32_OTGFS_FREQUENCY   (STM32_VCO_FREQUENCY / 9)
 
