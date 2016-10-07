@@ -179,14 +179,14 @@ __EXPORT int stm32_spi_bus_initialize(void)
 
 /* Define CS GPIO array */
 
-static const uint32_t spi1selects_gpio[] = PX4_SENSOR_BUS_CS_GPIO;
+static const uint32_t spi1selects_gpio[] = PX4_BARO_BUS_CS_GPIO;
 
 __EXPORT void stm32_spi1select(FAR struct spi_dev_s *dev, enum spi_dev_e devid, bool selected)
 {
 	/* SPI select is active low, so write !selected to select the device */
 
 	int sel = (int) devid;
-	ASSERT(PX4_SPI_BUS_ID(sel) == PX4_SPI_BUS_SENSORS);
+	ASSERT(PX4_SPI_BUS_ID(sel) == PX4_SPI_BUS_BARO);
 
 	/* Making sure the other peripherals are not selected */
 
@@ -209,7 +209,7 @@ __EXPORT uint8_t stm32_spi1status(FAR struct spi_dev_s *dev, enum spi_dev_e devi
 }
 
 
-static const uint32_t spi2selects_gpio[] = PX4_BARO_BUS_CS_GPIO;
+static const uint32_t spi2selects_gpio[] = PX4_RAMTRON_BUS_CS_GPIO;
 
 __EXPORT void stm32_spi2select(FAR struct spi_dev_s *dev, enum spi_dev_e devid, bool selected)
 {
@@ -217,7 +217,11 @@ __EXPORT void stm32_spi2select(FAR struct spi_dev_s *dev, enum spi_dev_e devid, 
 
 	int sel = (int) devid;
 
-	ASSERT(PX4_SPI_BUS_ID(sel) == PX4_SPI_BUS_BARO);
+	if (devid == SPIDEV_FLASH) {
+		sel = PX4_SPIDEV_FRAM;
+	}
+
+	ASSERT(PX4_SPI_BUS_ID(sel) == PX4_SPI_BUS_RAMTRON);
 
 	/* Making sure the other peripherals are not selected */
 	for (int cs = 0; arraySize(spi2selects_gpio) > 1 && cs < arraySize(spi2selects_gpio); cs++) {
@@ -240,17 +244,14 @@ __EXPORT uint8_t stm32_spi2status(FAR struct spi_dev_s *dev, enum spi_dev_e devi
 
 /* Define CS GPIO array */
 
-static const uint32_t spi4selects_gpio[] = PX4_RAMTRON_BUS_CS_GPIO;
+static const uint32_t spi4selects_gpio[] = PX4_SENSOR_BUS_CS_GPIO;
 
 __EXPORT void stm32_spi4select(FAR struct spi_dev_s *dev, enum spi_dev_e devid, bool selected)
 {
 	int sel = (int) devid;
 
-	if (devid == SPIDEV_FLASH) {
-		sel = PX4_SPIDEV_FRAM;
-	}
 
-	ASSERT(PX4_SPI_BUS_ID(sel) == PX4_SPI_BUS_RAMTRON);
+	ASSERT(PX4_SPI_BUS_ID(sel) == PX4_SPI_BUS_SENSORS);
 
 	/* Making sure the other peripherals are not selected */
 	for (int cs = 0; arraySize(spi4selects_gpio) > 1 && cs < arraySize(spi4selects_gpio); cs++) {
