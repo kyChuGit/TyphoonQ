@@ -235,12 +235,12 @@ private:
 
 
 #ifdef IST_CROSS_AXIS_CALI_FLOAT
-    float crossaxis_inv[9];
+	float crossaxis_inv[9];
 #else
-    int64_t crossaxis_inv[9];
+	int64_t crossaxis_inv[9];
 #endif
 
-    int32_t crossaxis_det[1];
+	int32_t crossaxis_det[1];
 
 	/**
 	 * Initialise the automatic measurement state machine and start it.
@@ -396,14 +396,14 @@ private:
 	 * @param enable		Enable cross-axis compensation
 	 * @return				Initialization succeed
 	 */
-    bool		crossaxis_matrix_init(int bitshift, int enable);
+	bool		crossaxis_matrix_init(int bitshift, int enable);
 
-    /**
-     * Transfer the raw sensor data using cross-axis matrix
-     *
-     * @param xyz		The pointer of the sensor buffer
-     */
-    void		crossaxis_transformation(int16_t *xyz);
+	/**
+	 * Transfer the raw sensor data using cross-axis matrix
+	 *
+	 * @param xyz		The pointer of the sensor buffer
+	 */
+	void		crossaxis_transformation(int16_t *xyz);
 
 	/* this class has pointer data members, do not allow copying it */
 	IST8310(const IST8310 &);
@@ -836,7 +836,7 @@ IST8310::reset()
 //		}
 //    }
 
-    return OK;
+	return OK;
 }
 
 void
@@ -1256,118 +1256,122 @@ IST8310::set_selftest(unsigned enable)
 bool
 IST8310::crossaxis_matrix_init(int bitshift, int enable)
 {
-    int i = 0;
-    uint8_t crossxbuf[6];
-    uint8_t crossybuf[6];
-    uint8_t crosszbuf[6];
-    uint8_t crossxbuf2[6];
-    uint8_t crossybuf2[6];
-    uint8_t crosszbuf2[6];
-    int16_t OTPcrossaxis[9] = {0};
+	int i = 0;
+	uint8_t crossxbuf[6];
+	uint8_t crossybuf[6];
+	uint8_t crosszbuf[6];
+	uint8_t crossxbuf2[6];
+	uint8_t crossybuf2[6];
+	uint8_t crosszbuf2[6];
+	int16_t OTPcrossaxis[9] = {0};
 #ifdef IST_CROSS_AXIS_CALI_FLOAT
-    float inv[9] = {0};
+	float inv[9] = {0};
 #else
-    int64_t inv[9] = {0};
+	int64_t inv[9] = {0};
 #endif
 
-    if (enable == 0)
-    {
+	if (enable == 0) {
 #ifdef IST_CROSS_AXIS_CALI_FLOAT
-        *crossaxis_inv = 1;
+		*crossaxis_inv = 1;
 #else
-        *crossaxis_inv = (1<<bitshift);
+		*crossaxis_inv = (1 << bitshift);
 #endif
-        *(crossaxis_inv+1) = 0;
-        *(crossaxis_inv+2) = 0;
-        *(crossaxis_inv+3) = 0;
+		*(crossaxis_inv + 1) = 0;
+		*(crossaxis_inv + 2) = 0;
+		*(crossaxis_inv + 3) = 0;
 #ifdef IST_CROSS_AXIS_CALI_FLOAT
-        *(crossaxis_inv+4) = 1;
+		*(crossaxis_inv + 4) = 1;
 #else
-        *(crossaxis_inv+4) = (1<<bitshift);
+		*(crossaxis_inv + 4) = (1 << bitshift);
 #endif
-        *(crossaxis_inv+5) = 0;
-        *(crossaxis_inv+6) = 0;
-        *(crossaxis_inv+7) = 0;
+		*(crossaxis_inv + 5) = 0;
+		*(crossaxis_inv + 6) = 0;
+		*(crossaxis_inv + 7) = 0;
 #ifdef IST_CROSS_AXIS_CALI_FLOAT
-        *(crossaxis_inv+8) = 1;
+		*(crossaxis_inv + 8) = 1;
 #else
-        *(crossaxis_inv+8) = (1<<bitshift);
+		*(crossaxis_inv + 8) = (1 << bitshift);
 #endif
-        *crossaxis_det = 1;
+		*crossaxis_det = 1;
 
-        return true;
-    }
-    else
-    {
-    	bool pass_all = false;
-    	uint8_t retry_times = 0;
-    	do {
-    		pass_all = true;
-            if (read(ADDR_Y11_Low, crossxbuf, 6) && read(ADDR_Y21_Low, crossybuf, 6) && read(ADDR_Y31_Low, crosszbuf, 6)) {
-            	if (read(ADDR_Y11_Low, crossxbuf2, 6) && read(ADDR_Y21_Low, crossybuf2, 6) && read(ADDR_Y31_Low, crosszbuf2, 6)) {
+		return true;
+
+	} else {
+		bool pass_all = false;
+		uint8_t retry_times = 0;
+
+		do {
+			pass_all = true;
+
+			if (read(ADDR_Y11_Low, crossxbuf, 6) && read(ADDR_Y21_Low, crossybuf, 6) && read(ADDR_Y31_Low, crosszbuf, 6)) {
+				if (read(ADDR_Y11_Low, crossxbuf2, 6) && read(ADDR_Y21_Low, crossybuf2, 6) && read(ADDR_Y31_Low, crosszbuf2, 6)) {
 					for (i = 0; i < 6; ++i) {
 						if (crossxbuf[i] != crossxbuf2[i]) {
 							pass_all = false;
 						}
 					}
-            	}
-            }
-            if (pass_all) break;
-    	} while (++retry_times < 5);
+				}
+			}
 
-    	if (retry_times >= 5 && !pass_all) return false;
+			if (pass_all) { break; }
+		} while (++retry_times < 5);
 
-        OTPcrossaxis[0] = ((int16_t) crossxbuf[1]) << 8 | ((int16_t) crossxbuf[0]);
-        OTPcrossaxis[3] = ((int16_t) crossxbuf[3]) << 8 | ((int16_t) crossxbuf[2]);
-        OTPcrossaxis[6] = ((int16_t) crossxbuf[5]) << 8 | ((int16_t) crossxbuf[4]);
-        OTPcrossaxis[1] = ((int16_t) crossybuf[1]) << 8 | ((int16_t) crossybuf[0]);
-        OTPcrossaxis[4] = ((int16_t) crossybuf[3]) << 8 | ((int16_t) crossybuf[2]);
-        OTPcrossaxis[7] = ((int16_t) crossybuf[5]) << 8 | ((int16_t) crossybuf[4]);
-        OTPcrossaxis[2] = ((int16_t) crosszbuf[1]) << 8 | ((int16_t) crosszbuf[0]);
-        OTPcrossaxis[5] = ((int16_t) crosszbuf[3]) << 8 | ((int16_t) crosszbuf[2]);
-        OTPcrossaxis[8] = ((int16_t) crosszbuf[5]) << 8 | ((int16_t) crosszbuf[4]);
-        *crossaxis_det = ((int32_t)OTPcrossaxis[0])*OTPcrossaxis[4]*OTPcrossaxis[8] +
-        				 ((int32_t)OTPcrossaxis[1])*OTPcrossaxis[5]*OTPcrossaxis[6] +
-						 ((int32_t)OTPcrossaxis[2])*OTPcrossaxis[3]*OTPcrossaxis[7] -
-						 ((int32_t)OTPcrossaxis[0])*OTPcrossaxis[5]*OTPcrossaxis[7] -
-						 ((int32_t)OTPcrossaxis[2])*OTPcrossaxis[4]*OTPcrossaxis[6] -
-						 ((int32_t)OTPcrossaxis[1])*OTPcrossaxis[3]*OTPcrossaxis[8];
+		if (retry_times >= 5 && !pass_all) { return false; }
 
-        if (*crossaxis_det == 0) {
-            return false;
-        }
+		OTPcrossaxis[0] = ((int16_t) crossxbuf[1]) << 8 | ((int16_t) crossxbuf[0]);
+		OTPcrossaxis[3] = ((int16_t) crossxbuf[3]) << 8 | ((int16_t) crossxbuf[2]);
+		OTPcrossaxis[6] = ((int16_t) crossxbuf[5]) << 8 | ((int16_t) crossxbuf[4]);
+		OTPcrossaxis[1] = ((int16_t) crossybuf[1]) << 8 | ((int16_t) crossybuf[0]);
+		OTPcrossaxis[4] = ((int16_t) crossybuf[3]) << 8 | ((int16_t) crossybuf[2]);
+		OTPcrossaxis[7] = ((int16_t) crossybuf[5]) << 8 | ((int16_t) crossybuf[4]);
+		OTPcrossaxis[2] = ((int16_t) crosszbuf[1]) << 8 | ((int16_t) crosszbuf[0]);
+		OTPcrossaxis[5] = ((int16_t) crosszbuf[3]) << 8 | ((int16_t) crosszbuf[2]);
+		OTPcrossaxis[8] = ((int16_t) crosszbuf[5]) << 8 | ((int16_t) crosszbuf[4]);
+		*crossaxis_det = ((int32_t)OTPcrossaxis[0]) * OTPcrossaxis[4] * OTPcrossaxis[8] +
+				 ((int32_t)OTPcrossaxis[1]) * OTPcrossaxis[5] * OTPcrossaxis[6] +
+				 ((int32_t)OTPcrossaxis[2]) * OTPcrossaxis[3] * OTPcrossaxis[7] -
+				 ((int32_t)OTPcrossaxis[0]) * OTPcrossaxis[5] * OTPcrossaxis[7] -
+				 ((int32_t)OTPcrossaxis[2]) * OTPcrossaxis[4] * OTPcrossaxis[6] -
+				 ((int32_t)OTPcrossaxis[1]) * OTPcrossaxis[3] * OTPcrossaxis[8];
+
+		if (*crossaxis_det == 0) {
+			return false;
+		}
+
 #ifdef IST_CROSS_AXIS_CALI_FLOAT
-        inv[0] = (float)OTPcrossaxis[4] * OTPcrossaxis[8] - (float)OTPcrossaxis[5] * OTPcrossaxis[7];
-        inv[1] = (float)OTPcrossaxis[2] * OTPcrossaxis[7] - (float)OTPcrossaxis[1] * OTPcrossaxis[8];
-        inv[2] = (float)OTPcrossaxis[1] * OTPcrossaxis[5] - (float)OTPcrossaxis[2] * OTPcrossaxis[4];
-        inv[3] = (float)OTPcrossaxis[5] * OTPcrossaxis[6] - (float)OTPcrossaxis[3] * OTPcrossaxis[8];
-        inv[4] = (float)OTPcrossaxis[0] * OTPcrossaxis[8] - (float)OTPcrossaxis[2] * OTPcrossaxis[6];
-        inv[5] = (float)OTPcrossaxis[2] * OTPcrossaxis[3] - (float)OTPcrossaxis[0] * OTPcrossaxis[5];
-        inv[6] = (float)OTPcrossaxis[3] * OTPcrossaxis[7] - (float)OTPcrossaxis[4] * OTPcrossaxis[6];
-        inv[7] = (float)OTPcrossaxis[1] * OTPcrossaxis[6] - (float)OTPcrossaxis[0] * OTPcrossaxis[7];
-        inv[8] = (float)OTPcrossaxis[0] * OTPcrossaxis[4] - (float)OTPcrossaxis[1] * OTPcrossaxis[3];
+		inv[0] = (float)OTPcrossaxis[4] * OTPcrossaxis[8] - (float)OTPcrossaxis[5] * OTPcrossaxis[7];
+		inv[1] = (float)OTPcrossaxis[2] * OTPcrossaxis[7] - (float)OTPcrossaxis[1] * OTPcrossaxis[8];
+		inv[2] = (float)OTPcrossaxis[1] * OTPcrossaxis[5] - (float)OTPcrossaxis[2] * OTPcrossaxis[4];
+		inv[3] = (float)OTPcrossaxis[5] * OTPcrossaxis[6] - (float)OTPcrossaxis[3] * OTPcrossaxis[8];
+		inv[4] = (float)OTPcrossaxis[0] * OTPcrossaxis[8] - (float)OTPcrossaxis[2] * OTPcrossaxis[6];
+		inv[5] = (float)OTPcrossaxis[2] * OTPcrossaxis[3] - (float)OTPcrossaxis[0] * OTPcrossaxis[5];
+		inv[6] = (float)OTPcrossaxis[3] * OTPcrossaxis[7] - (float)OTPcrossaxis[4] * OTPcrossaxis[6];
+		inv[7] = (float)OTPcrossaxis[1] * OTPcrossaxis[6] - (float)OTPcrossaxis[0] * OTPcrossaxis[7];
+		inv[8] = (float)OTPcrossaxis[0] * OTPcrossaxis[4] - (float)OTPcrossaxis[1] * OTPcrossaxis[3];
 
-        for (i=0; i<9; i++) {
-            crossaxis_inv[i] = inv[i] * OTPsensitivity/(*crossaxis_det);
-        }
+		for (i = 0; i < 9; i++) {
+			crossaxis_inv[i] = inv[i] * OTPsensitivity / (*crossaxis_det);
+		}
+
 #else
-        inv[0] = (int64_t)OTPcrossaxis[4] * OTPcrossaxis[8] - (int64_t)OTPcrossaxis[5] * OTPcrossaxis[7];
-        inv[1] = (int64_t)OTPcrossaxis[2] * OTPcrossaxis[7] - (int64_t)OTPcrossaxis[1] * OTPcrossaxis[8];
-        inv[2] = (int64_t)OTPcrossaxis[1] * OTPcrossaxis[5] - (int64_t)OTPcrossaxis[2] * OTPcrossaxis[4];
-        inv[3] = (int64_t)OTPcrossaxis[5] * OTPcrossaxis[6] - (int64_t)OTPcrossaxis[3] * OTPcrossaxis[8];
-        inv[4] = (int64_t)OTPcrossaxis[0] * OTPcrossaxis[8] - (int64_t)OTPcrossaxis[2] * OTPcrossaxis[6];
-        inv[5] = (int64_t)OTPcrossaxis[2] * OTPcrossaxis[3] - (int64_t)OTPcrossaxis[0] * OTPcrossaxis[5];
-        inv[6] = (int64_t)OTPcrossaxis[3] * OTPcrossaxis[7] - (int64_t)OTPcrossaxis[4] * OTPcrossaxis[6];
-        inv[7] = (int64_t)OTPcrossaxis[1] * OTPcrossaxis[6] - (int64_t)OTPcrossaxis[0] * OTPcrossaxis[7];
-        inv[8] = (int64_t)OTPcrossaxis[0] * OTPcrossaxis[4] - (int64_t)OTPcrossaxis[1] * OTPcrossaxis[3];
+		inv[0] = (int64_t)OTPcrossaxis[4] * OTPcrossaxis[8] - (int64_t)OTPcrossaxis[5] * OTPcrossaxis[7];
+		inv[1] = (int64_t)OTPcrossaxis[2] * OTPcrossaxis[7] - (int64_t)OTPcrossaxis[1] * OTPcrossaxis[8];
+		inv[2] = (int64_t)OTPcrossaxis[1] * OTPcrossaxis[5] - (int64_t)OTPcrossaxis[2] * OTPcrossaxis[4];
+		inv[3] = (int64_t)OTPcrossaxis[5] * OTPcrossaxis[6] - (int64_t)OTPcrossaxis[3] * OTPcrossaxis[8];
+		inv[4] = (int64_t)OTPcrossaxis[0] * OTPcrossaxis[8] - (int64_t)OTPcrossaxis[2] * OTPcrossaxis[6];
+		inv[5] = (int64_t)OTPcrossaxis[2] * OTPcrossaxis[3] - (int64_t)OTPcrossaxis[0] * OTPcrossaxis[5];
+		inv[6] = (int64_t)OTPcrossaxis[3] * OTPcrossaxis[7] - (int64_t)OTPcrossaxis[4] * OTPcrossaxis[6];
+		inv[7] = (int64_t)OTPcrossaxis[1] * OTPcrossaxis[6] - (int64_t)OTPcrossaxis[0] * OTPcrossaxis[7];
+		inv[8] = (int64_t)OTPcrossaxis[0] * OTPcrossaxis[4] - (int64_t)OTPcrossaxis[1] * OTPcrossaxis[3];
 
-        for (i=0; i<9; i++) {
-            crossaxis_inv[i] = (inv[i] << bitshift) * OTPsensitivity;
-        }
+		for (i = 0; i < 9; i++) {
+			crossaxis_inv[i] = (inv[i] << bitshift) * OTPsensitivity;
+		}
+
 #endif
-    }
+	}
 
-    return true;
+	return true;
 }
 
 void
@@ -1379,30 +1383,31 @@ IST8310::crossaxis_transformation(int16_t *xyz)
 	int64_t outputtmp[3];
 #endif
 
-    outputtmp[0] = xyz[0] * crossaxis_inv[0] +
-                   xyz[1] * crossaxis_inv[1] +
-                   xyz[2] * crossaxis_inv[2];
+	outputtmp[0] = xyz[0] * crossaxis_inv[0] +
+		       xyz[1] * crossaxis_inv[1] +
+		       xyz[2] * crossaxis_inv[2];
 
-    outputtmp[1] = xyz[0] * crossaxis_inv[3] +
-                   xyz[1] * crossaxis_inv[4] +
-                   xyz[2] * crossaxis_inv[5];
+	outputtmp[1] = xyz[0] * crossaxis_inv[3] +
+		       xyz[1] * crossaxis_inv[4] +
+		       xyz[2] * crossaxis_inv[5];
 
-    outputtmp[2] = xyz[0] * crossaxis_inv[6] +
-                   xyz[1] * crossaxis_inv[7] +
-                   xyz[2] * crossaxis_inv[8];
+	outputtmp[2] = xyz[0] * crossaxis_inv[6] +
+		       xyz[1] * crossaxis_inv[7] +
+		       xyz[2] * crossaxis_inv[8];
 #ifdef IST_CROSS_AXIS_CALI_FLOAT
-    xyz[0]= (short)(outputtmp[0]);
-    xyz[1]= (short)(outputtmp[1]);
-    xyz[2]= (short)(outputtmp[2]);
+	xyz[0] = (short)(outputtmp[0]);
+	xyz[1] = (short)(outputtmp[1]);
+	xyz[2] = (short)(outputtmp[2]);
 #else
-    int i = 0;
-    for (i=0; i<3; i++)
-    {
-        outputtmp[i] = outputtmp[i] / (*crossaxis_det);
-    }
-    xyz[0]= (short)(outputtmp[0] >> CROSSAXISINV_BITSHIFT);
-    xyz[1]= (short)(outputtmp[1] >> CROSSAXISINV_BITSHIFT);
-    xyz[2]= (short)(outputtmp[2] >> CROSSAXISINV_BITSHIFT);
+	int i = 0;
+
+	for (i = 0; i < 3; i++) {
+		outputtmp[i] = outputtmp[i] / (*crossaxis_det);
+	}
+
+	xyz[0] = (short)(outputtmp[0] >> CROSSAXISINV_BITSHIFT);
+	xyz[1] = (short)(outputtmp[1] >> CROSSAXISINV_BITSHIFT);
+	xyz[2] = (short)(outputtmp[2] >> CROSSAXISINV_BITSHIFT);
 #endif
 }
 
