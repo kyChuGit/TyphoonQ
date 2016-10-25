@@ -161,11 +161,16 @@ stm32_boardinitialize(void)
 //	stm32_configgpio(GPIO_VDD_BRICK_VALID);
 
 
-	/* configure the GPIO pins to outputs and keep them low */
+	/* Configure the GPIO pins to outputs and keep them low */
 	stm32_configgpio(GPIO_GPIO0_OUTPUT);
 	stm32_configgpio(GPIO_GPIO1_OUTPUT);
 	stm32_configgpio(GPIO_GPIO2_OUTPUT);
 	stm32_configgpio(GPIO_GPIO3_OUTPUT);
+
+	/* Configure the CAN Silent Controle pins and keep them low */
+	stm32_configgpio(GPIO_CAN1_SILENCE);
+	stm32_configgpio(GPIO_CAN2_SILENCE);
+	stm32_configgpio(GPIO_CAN3_SILENCE);
 
 	/* configure SPI interfaces */
 	stm32_spiinitialize();
