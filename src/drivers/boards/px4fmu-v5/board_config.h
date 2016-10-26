@@ -143,6 +143,7 @@ __BEGIN_DECLS
 #define PX4_I2C_BUS_EXPANSION2  4
 #define PX4_I2C_BUS_LED			PX4_I2C_BUS_EXPANSION
 
+#define PX4_I2C_BUS_SET {PX4_I2C_BUS_ONBOARD, PX4_I2C_BUS_EXPANSION, PX4_I2C_BUS_EXPANSION1, PX4_I2C_BUS_EXPANSION2, -1}
 /* Devices on the external bus.
  *
  * Note that these are unshifted addresses.
@@ -229,6 +230,9 @@ __BEGIN_DECLS
 #define PWMIN_TIMER			12
 #define PWMIN_TIMER_CHANNEL     /* PH6 JP1-9  */ 1
 #define GPIO_PWM_IN             /* PH6 JP1-9  */ GPIO_TIM12_CH1IN_2
+
+#define RC_SERIAL_PORT      "/dev/ttyS5"
+#define INVERT_RC_INPUT(_s)     while(0)
 
 
 #define SDIO_SLOTNO             0  /* Only one slot */

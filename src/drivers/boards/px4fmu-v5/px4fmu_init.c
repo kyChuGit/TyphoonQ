@@ -160,6 +160,9 @@ stm32_boardinitialize(void)
 //	stm32_configgpio(GPIO_PERIPH_3V3_EN);
 //	stm32_configgpio(GPIO_VDD_BRICK_VALID);
 
+	/* Radio Off (active low, init is set) */
+
+	stm32_configgpio(GPIO_PCON_RADIO);
 
 	/* Configure the GPIO pins to outputs and keep them low */
 	stm32_configgpio(GPIO_GPIO0_OUTPUT);
