@@ -19,6 +19,7 @@ set(config_module_list
 	drivers/boards/px4fmu-v5
 	drivers/rgbled
 	drivers/mpu6000
+	drivers/mpu6500
 	drivers/mpu9250
 	drivers/hmc5883
 	drivers/ist8310
