@@ -101,9 +101,12 @@ static int board_button_irq(int irq, FAR void *context)
 			*(uint32_t *)0x40002850 = 0xdeaddead;
 			stm32_pwr_enablebkp(false);
 			up_mdelay(50);
-			up_systemreset();
+			board_pwr(false);
 
 			while (1);
+
+			// todo:Until there is a bootloader
+			//up_systemreset();
 		}
 	}
 
