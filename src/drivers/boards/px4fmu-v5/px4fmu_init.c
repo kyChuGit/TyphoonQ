@@ -151,6 +151,9 @@ stm32_boardinitialize(void)
 
 	board_pwr_init(0);
 
+	/* configure LEDs */
+	board_autoled_initialize();
+
 	/* configure ADC pins */
 	stm32_configgpio(GPIO_ADC1_IN0);	/* BATT_VOLTAGE_SENS */
 	stm32_configgpio(GPIO_ADC1_IN10);	/* VDD_5V_SENS */
@@ -178,8 +181,7 @@ stm32_boardinitialize(void)
 	/* configure SPI interfaces */
 	stm32_spiinitialize();
 
-	/* configure LEDs */
-	board_autoled_initialize();
+
 }
 
 /****************************************************************************
