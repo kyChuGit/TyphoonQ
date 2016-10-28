@@ -50,6 +50,7 @@ __BEGIN_DECLS
 #  endif
 #  if defined(CONFIG_ARCH_CHIP_STM32F7)
 #    include <chip.h>
+#  include <stm32_tim.h>
 #    define PX4_BBSRAM_SIZE STM32F7_BBSRAM_SIZE
 #    define PX4_BBSRAM_GETDESC_IOCTL STM32F7_BBSRAM_GETDESC_IOCTL
 #  endif
