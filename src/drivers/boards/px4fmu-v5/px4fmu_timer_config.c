@@ -72,7 +72,7 @@ __EXPORT const io_timers_t io_timers[MAX_IO_TIMERS] = {
 		.last_channel_index = 5,
 		.handler = io_timer_handler1,
 		.vectorno =  STM32_IRQ_TIM12,
-	}
+	},
 };
 
 __EXPORT const timer_io_channels_t timer_io_channels[MAX_TIMER_IO_CHANNELS] = {
@@ -108,4 +108,38 @@ __EXPORT const timer_io_channels_t timer_io_channels[MAX_TIMER_IO_CHANNELS] = {
 		.ccr_offset = STM32_GTIM_CCR2_OFFSET,
 		.masks  = GTIM_SR_CC2IF | GTIM_SR_CC2OF
 	},
+};
+
+__EXPORT const struct io_timers_t led_pwm_timers[1] = {
+	{
+		.base               = STM32_TIM5_BASE,
+		.clock_register     = STM32_RCC_APB1ENR,
+		.clock_bit          = RCC_APB1ENR_TIM5EN,
+		.clock_freq         = STM32_APB1_TIM5_CLKIN,
+		.vectorno           =  STM32_IRQ_TIM5,
+		.first_channel_index = 0,
+		.last_channel_index = 2,
+	}
+};
+
+
+__EXPORT const struct timer_io_channels_t led_pwm_channels[3] = {
+	{
+		.gpio_out = LED_TIM5_CH1OUT,
+		.gpio_in  = 0,
+		.timer_index = 0,
+		.timer_channel = 1,
+	},
+	{
+		.gpio_out = LED_TIM5_CH2OUT,
+		.gpio_in  = 0,
+		.timer_index = 0,
+		.timer_channel = 2,
+	},
+	{
+		.gpio_out = LED_TIM5_CH3OUT,
+		.gpio_in  = 0,
+		.timer_index = 0,
+		.timer_channel = 3,
+	}
 };
