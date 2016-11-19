@@ -1,0 +1,174 @@
+(**1**)int poll(struct pollfd fds[], nfds_t nfds, int timeout)
+功能：监控文件描述符（多个）；
+说明：timemout=0,poll()函数立即返回而不阻塞；timeout=INFTIM(-1),poll()会一直阻塞下去，直到检测到return > 0；
+参数：
+    fds:struct pollfd结构类型的数组；
+    nfds:用于标记数组fds中的结构体元素的总数量；
+    timeout:是poll函数调用阻塞的时间，单位：毫秒；
+返回值：
+    >0：数组fds中准备好读、写或出错状态的那些socket描述符的总数量；
+    ==0:poll()函数会阻塞timeout所指定的毫秒时间长度之后返回;
+    -1:poll函数调用失败；同时会自动设置全局变量errno；
+
+
+(**2**)int orb_subscribe(const struct orb_metadata *meta)
+功能：订阅主题（topic）;
+说明：即使订阅的主题没有被公告，但是也能订阅成功；但是在这种情况下，却得不到数据，直到主题被公告；
+参数：
+    meta:uORB元对象，可以认为是主题id，一般是通过ORB_ID(主题名)来赋值；
+返回值：
+    错误则返回ERROR;成功则返回一个可以读取数据、更新话题的句柄；如果待订阅的主题没有定义或声明则会返回-1，然后会将errno赋值为ENOENT;
+eg:
+    int fd = orb_subscribe(ORB_ID(topicName));
+
+
+(**3**)int orb_copy(const struct orb_metadata *meta, int handle, void *buffer)
+功能：从订阅的主题中获取数据并将数据保存到buffer中；
+参数：
+    meta:uORB元对象，可以认为是主题id，一般是通过ORB_ID(主题名)来赋值;
+    handle:订阅主题返回的句柄；
+    buffer:从主题中获取的数据；
+返回值：
+    返回OK表示获取数据成功，错误返回ERROR;否则则有根据的去设置errno;
+eg:
+    struct sensor_combined_s raw;
+    orb_copy(ORB_ID(sensor_combined), sensor_sub_fd, &raw);
+
+
+(**4**)orb_advert_t orb_advertise(const struct orb_metadata *meta, const void *data)
+功能：公告发布者的主题；
+说明：在发布主题之前是必须的；否则订阅者虽然能订阅，但是得不到数据；
+参数：
+    meta:uORB元对象，可以认为是主题id，一般是通过ORB_ID(主题名)来赋值;
+    data:指向一个已被初始化，发布者要发布的数据存储变量的指针；
+返回值：错误则返回ERROR;成功则返回一个可以发布主题的句柄；如果待发布的主题没有定义或声明则会返回-1，然后会将errno赋值为ENOENT;
+eg:
+    struct vehicle_attitude_s att;
+    memset(&att, 0, sizeof(att));
+    int att_pub_fd = orb_advertise(ORB_ID(vehicle_attitude), &att);
+
+
+(**5**)int orb_publish(const struct orb_metadata *meta, orb_advert_t handle, const void *data)
+功能：发布新数据到主题；
+参数：
+    meta:uORB元对象，可以认为是主题id，一般是通过ORB_ID(主题名)来赋值;
+    handle:orb_advertise函数返回的句柄；
+    data:指向待发布数据的指针；
+返回值：OK表示成功；错误返回ERROR；否则则有根据的去设置errno;
+eg: 
+    orb_publish(ORB_ID(vehicle_attitude), att_pub_fd, &att);
+
+
+(**6**)int orb_set_interval(int handle, unsigned interval)
+功能：设置订阅的最小时间间隔；
+说明：如果设置了，则在这间隔内发布的数据将订阅不到；需要注意的是，设置后，第一次的数据订阅还是由起初设置的频率来获取，
+参数：
+    handle:orb_subscribe函数返回的句柄；
+    interval:间隔时间，单位ms;
+返回值：OK表示成功；错误返回ERROR；否则则有根据的去设置errno;
+eg:
+    orb_set_interval(sensor_sub_fd, 1000);
+
+
+(**7**)orb_advert_t orb_advertise_multi(const struct orb_metadata *meta, const void *data, int *instance, int priority)
+功能：设备/驱动器的多个实例实现公告，利用此函数可以注册多个类似的驱动程序；
+说明：例如在飞行器中有多个相同的传感器，那他们的数据类型则类似，不必要注册几个不同的话题；
+参数：
+    meta:uORB元对象，可以认为是主题id，一般是通过ORB_ID(主题名)来赋值;
+    data:指向一个已被初始化，发布者要发布的数据存储变量的指针；
+    instance:整型指针，指向实例的ID（从0开始）；
+    priority:实例的优先级。如果用户订阅多个实例，优先级的设定可以使用户使用优先级高的最优数据源；
+返回值：
+    错误则返回ERROR;成功则返回一个可以发布主题的句柄；如果待发布的主题没有定义或声明则会返回-1，然后会将errno赋值为ENOENT;
+eg:
+    struct orb_test t;
+    t.val = 0;
+    int instance0;
+    orb_advert_t pfd0 = orb_advertise_multi(ORB_ID(orb_multitest), &t, &instance0, ORB_PRIO_MAX);
+
+
+(**8**)int orb_subscribe_multi(const struct orb_metadata *meta, unsigned instance)
+功能：订阅主题（topic）;
+说明：通过实例的ID索引来确定是主题的哪个实例；
+参数：
+    meta:uORB元对象，可以认为是主题id，一般是通过ORB_ID(主题名)来赋值;
+    instance:主题实例ID;实例ID=0与orb_subscribe()实现相同；
+返回值：
+    错误则返回ERROR;成功则返回一个可以读取数据、更新话题的句柄；如果待订阅的主题没有定义或声明则会返回-1，然后会将errno赋值为ENOENT;
+eg:
+    int sfd1 = orb_subscribe_multi(ORB_ID(orb_multitest), 1);
+
+
+(**9**)int orb_unsubscribe(int handle)
+功能：取消订阅主题；
+参数：
+    handle:主题句柄；
+返回值：
+    OK表示成功；错误返回ERROR;否则则有根据的去设置errno;
+eg:
+    ret = orb_unsubscribe(handle);
+
+
+(**10**)int orb_check(int handle, bool *updated)
+功能：订阅者可以用来检查一个主题在发布者上一次更新数据后，有没有订阅者调用过ob_copy来接收、处理过；
+说明：如果主题在在被公告前就有人订阅，那么这个API将返回“not-updated”直到主题被公告。可以不用poll，只用这个函数实现数据的获取。
+参数：
+    handle:主题句柄；
+    updated:如果当最后一次更新的数据被获取了，检测到并设置updated为ture;
+返回值：
+    OK表示检测成功；错误返回ERROR;否则则有根据的去设置errno;
+eg:
+    if (PX4_OK != orb_check(sfd, &updated)) {
+        return printf("check(1) failed");
+    }
+    if (updated) {
+        return printf("spurious updated flag");
+    }
+
+    //or
+
+    bool updated;
+    struct random_integer_data rd;
+
+    /* check to see whether the topic has updated since the last time we read it */
+    orb_check(topic_handle, &updated);
+
+    if (updated) {
+        /* make a local copy of the updated data structure */
+        orb_copy(ORB_ID(random_integer), topic_handle, &rd);
+        printf("Random integer is now %d\n", rd.r);
+    }
+
+
+(**11**)int orb_stat(int handle, uint64_t *time)
+功能：订阅者可以用来检查一个主题最后的发布时间；
+参数：
+    handle:主题句柄；
+    time:存放主题最后发布的时间；0表示该主题没有发布或公告；
+返回值：
+    OK表示检测成功；错误返回ERROR;否则则有根据的去设置errno;
+eg:
+    ret = orb_stat(handle,time);
+
+
+(**12**)int orb_exists(const struct orb_metadata *meta, int instance)
+功能：检测一个主题是否存在；
+参数：
+    meta:uORB元对象，可以认为是主题id，一般是通过ORB_ID(主题名)来赋值;
+    instance:ORB 实例ID;
+返回值：
+    OK表示检测成功；错误返回ERROR;否则则有根据的去设置errno;
+eg:
+    ret = orb_exists(ORB_ID(vehicle_attitude),0);
+
+
+(**13**)int orb_priority(int handle, int *priority)
+功能：获取主题优先级别；
+参数：
+    handle:主题句柄；
+    priority:存放获取的优先级别；
+返回值：
+    OK表示检测成功；错误返回ERROR;否则则有根据的去设置errno;
+eg:
+    ret = orb_priority(handle,&priority);
+
