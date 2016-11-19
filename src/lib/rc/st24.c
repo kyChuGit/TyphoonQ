@@ -258,6 +258,20 @@ int st24_decode(uint8_t byte, uint8_t *rssi, uint8_t *lost_count, uint16_t *chan
 	return ret;
 }
 
+int st24_init(const char *device)
+{
+	if(_st24_fd < 0)
+	{
+		_st24_fd = open(device, O_RDWR | O_NONBLOCK);
+	}
+	if(_st24_fd < 0)
+	{
+		PX4_ERR("open st24 uart failed.");
+		return -1;
+	}
+	return _st24_fd;
+}
+
 bool st24_bind(const char *device)
 {
 	if(_st24_fd < 0)
