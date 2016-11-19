@@ -12,10 +12,15 @@
 #
 
 sh /etc/init.d/rc.mc_defaults
+
+param set MAV_TYPE 2
+param set MC_YAWRATE_P 0.12
+param set CAL_MAG0_ROT 4
+
 if tap_esc start -d /dev/ttyS4 -n 4
 then
 fi
 set OUTPUT_MODE tap_esc
-param set BAT_N_CELLS 4
+param set BAT_N_CELLS 3
 
 set MIXER quad_x

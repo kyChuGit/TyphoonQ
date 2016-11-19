@@ -259,6 +259,7 @@ TAP_ESC::init()
 	int reConfig = 5;
 	while(reConfig --) {
 		ret = send_packet(packet);//, 0);
+		usleep(10000);
 	}
 
 	if (ret < 0) {
@@ -298,9 +299,9 @@ TAP_ESC::init()
 
 			} else {
 
-				/* Give it time to come in */
+				/* Give it time to come in (3ms) */
 
-				usleep(1000);
+				usleep(3000);
 			}
 		}
 
@@ -938,7 +939,7 @@ int tap_esc_start(void)
 			ret = tap_esc->init();
 
 			if (ret != OK) {
-				PX4_ERR("failed to initialize tap_esc (%i)", ret);
+				PX4_ERR("failed to initialize tap_esc (%i), channels:%d", ret, _supported_channel_count);
 				delete tap_esc;
 				tap_esc = nullptr;
 			}

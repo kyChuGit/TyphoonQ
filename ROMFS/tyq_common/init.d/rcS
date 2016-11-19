@@ -15,31 +15,49 @@
 # /dev/ttyS7: DEBUG (UART8)
 
 #
+# Mount the procfs.
+#
+mount -t procfs /proc
+
+#
 # Start CDC/ACM serial driver
 #
 sercon
 
-set TUNE_ERR ML<<CP4CP4CP4CP4CP4
+#
+# Default to auto-start mode.
+#
+set MODE autostart
+
 set LOG_FILE /fs/microsd/bootlog.txt
-set DATAMAN_OPT -r
+
+#set TUNE_ERR ML<<CP4CP4CP4CP4CP4
+#set LOG_FILE /fs/microsd/bootlog.txt
+#set DATAMAN_OPT -r
 
 #
 # Try to mount the microSD card.
 #
+# REBOOTWORK this needs to start after the flight control loop
 if mount -t vfat /dev/mmcsd0 /fs/microsd
 then
-	echo "microSD present"
-	unset DATAMAN_OPT
+	echo "[i] microSD mounted: /fs/microsd"
+ 	if hardfault_log check
+ 	then
+		if hardfault_log commit
+		then
+			hardfault_log reset
+		fi
+  else
+ fi
 else
 	if mkfatfs /dev/mmcsd0
 	then
 		if mount -t vfat /dev/mmcsd0 /fs/microsd
 		then
-			echo "microSD card formatted"
-			unset DATAMAN_OPT
+			echo "INFO  [init] MicroSD card formatted"
 		else
 			echo "ERROR [init] Format failed"
-			tone_alarm MNBG
 			set LOG_FILE /dev/null
 		fi
 	else
@@ -70,7 +88,7 @@ else
 	fi
 fi
 
-tone_alarm start
+#tone_alarm start
 
 #
 # Start system state indicator
@@ -84,7 +102,7 @@ fi
 #
 if param compare SYS_AUTOSTART 0
 then
-	param set SYS_AUTOSTART 6001
+	param set SYS_AUTOSTART 4001
 	param set SYS_AUTOCONFIG 1
 fi
 
@@ -98,6 +116,16 @@ then
 	set AUTOCNF yes
 else
 	set AUTOCNF no
+
+	#
+	# Release 1.4.0 transitional support:
+	# set to old default if unconfigured.
+	# this preserves the previous behaviour
+	#
+	if param compare BAT_N_CELLS 0
+	then
+		param set BAT_N_CELLS 3
+	fi
 fi
 
 #
@@ -128,24 +156,11 @@ then
 fi
 unset AUTOCNF
 
-#
-# Set default output if not set
-#
-if [ $OUTPUT_MODE == none ]
-then
-	if [ $USE_IO == yes ]
-	then
-		set OUTPUT_MODE io
-	else
-		set OUTPUT_MODE fmu
-	fi
-fi
-
 gps start -d /dev/ttyS0
 
 # waypoint storage
 # REBOOTWORK this needs to start in parallel
-if dataman start $DATAMAN_OPT
+if dataman start
 then
 fi
 
@@ -161,11 +176,13 @@ commander start
 #
 load_mon start
 
+# FIXME: for now we just want to make sure mavlink always runs with version 2,
+# later move this to a proper place
+param set MAV_PROTO_VER 2
 # Start MAVLink on the gimbal port
 #mavlink start -r 1200 -d /dev/ttyS1
-
 # Start MAVLink on USB, developers can use the MAVLink shell
-mavlink start -r 60000 -d /dev/ttyACM0 -m config
+mavlink start -r 800000 -d /dev/ttyACM0 -m config -x
 
 #
 # Logging
@@ -201,6 +218,12 @@ then
 	# Start standard fixedwing apps
 	sh /etc/init.d/rc.fw_apps
 fi
+
+#
+# Set default output if not set
+#
+
+set OUTPUT_MODE fmu
 
 #
 # Multicopters setup

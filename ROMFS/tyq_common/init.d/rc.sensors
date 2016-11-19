@@ -13,7 +13,7 @@ if ist8310 start
 then
 fi
 
-if ms5611 -T 5607 -I start
+if ms5611 -T 5607 -s start
 then
 fi
 
