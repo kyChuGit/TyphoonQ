@@ -722,7 +722,6 @@ TAP_ESC::cycle()
 				motor_out[i] = _outputs.output[i];
 			}
 //		}
-
 		send_esc_outputs(motor_out, esc_count);
 		read_data_from_uart();
 
