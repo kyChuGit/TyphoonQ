@@ -92,7 +92,7 @@ public:
 	virtual int	ioctl(file *filp, int cmd, unsigned long arg);
 	void cycle();
 protected:
-	void select_responder(uint8_t sel);
+//	void select_responder(uint8_t sel);
 private:
 
 	static const uint8_t crcTable[256];
@@ -139,7 +139,7 @@ private:
 	void send_esc_outputs(const float *pwm, const unsigned num_pwm);
 	uint8_t crc8_esc(uint8_t *p, uint8_t len);
 	uint8_t crc_packet(EscPacket &p);
-	int send_packet(EscPacket &p, int responder);
+	int send_packet(EscPacket &p);//, int responder);
 	void read_data_from_uart();
 	bool parse_tap_esc_feedback(ESC_UART_BUF *serial_buf, EscPacket *packetdata);
 	static int control_callback(uintptr_t handle,
@@ -224,7 +224,7 @@ TAP_ESC::~TAP_ESC()
 int
 TAP_ESC::init()
 {
-	int ret;
+	int ret = 0;
 
 	ASSERT(!_initialized);
 
@@ -252,10 +252,14 @@ TAP_ESC::init()
 				ESC_CHANNEL_MAP_RUNNING_DIRECTION;
 	}
 
+	config.controlMode = TAP_ESC_ModeClosedLoop;
 	config.maxChannelValue = RPMMAX;
 	config.minChannelValue = RPMMIN;
 
-	ret = send_packet(packet, 0);
+	int reConfig = 5;
+	while(reConfig --) {
+		ret = send_packet(packet);//, 0);
+	}
 
 	if (ret < 0) {
 		return ret;
@@ -271,7 +275,7 @@ TAP_ESC::init()
 		info_req.channelID = cid;
 		info_req.requestInfoType = REQEST_INFO_BASIC;
 
-		ret = send_packet(packet_info, cid);
+		ret = send_packet(packet_info);//, cid);
 
 		if (ret < 0) {
 			return ret;
@@ -317,7 +321,7 @@ TAP_ESC::init()
 
 	while (unlock_times--) {
 
-		send_packet(unlock_packet, -1);
+		send_packet(unlock_packet);//, -1);
 
 		/* Min Packet to Packet time is 1 Ms so use 2 */
 
@@ -331,16 +335,16 @@ TAP_ESC::init()
 	return ret;
 }
 
-int TAP_ESC::send_packet(EscPacket &packet, int responder)
+int TAP_ESC::send_packet(EscPacket &packet)//, int responder)
 {
-	if (responder >= 0) {
-
-		if (responder > _channels_count) {
-			return -EINVAL;
-		}
-
-		select_responder(responder);
-	}
+//	if (responder >= 0) {
+//
+//		if (responder > _channels_count) {
+//			return -EINVAL;
+//		}
+//
+//		select_responder(responder);
+//	}
 
 	int packet_len = crc_packet(packet);
 	int ret = ::write(_uart_fd, &packet.head, packet_len);
@@ -397,14 +401,14 @@ uint8_t TAP_ESC::crc_packet(EscPacket &p)
 	p.d.bytes[p.len] = crc8_esc(&p.len, p.len + 2);
 	return p.len + offsetof(EscPacket, d) + 1;
 }
-void TAP_ESC::select_responder(uint8_t sel)
-{
-#if defined(GPIO_S0)
-	px4_arch_gpiowrite(GPIO_S0, sel & 1);
-	px4_arch_gpiowrite(GPIO_S1, sel & 2);
-	px4_arch_gpiowrite(GPIO_S2, sel & 4);
-#endif
-}
+//void TAP_ESC::select_responder(uint8_t sel)
+//{
+//#if defined(GPIO_S0)
+//	px4_arch_gpiowrite(GPIO_S0, sel & 1);
+//	px4_arch_gpiowrite(GPIO_S1, sel & 2);
+//	px4_arch_gpiowrite(GPIO_S2, sel & 4);
+//#endif
+//}
 
 
 void TAP_ESC:: send_esc_outputs(const float *pwm, const unsigned num_pwm)
@@ -436,7 +440,7 @@ void TAP_ESC:: send_esc_outputs(const float *pwm, const unsigned num_pwm)
 		packet.d.reqRun.rpm_flags[i] = rpm[i];
 	}
 
-	int ret = send_packet(packet, which_to_respone);
+	int ret = send_packet(packet);//, which_to_respone);
 
 	if (++which_to_respone == _channels_count) {
 		which_to_respone = 0;
@@ -1100,7 +1104,7 @@ void stop()
 
 void usage()
 {
-	PX4_INFO("usage: tap_esc start -d /dev/ttyS2 -n <1-8>");
+	PX4_INFO("usage: tap_esc start -d /dev/ttyS4 -n <1-8>");
 	PX4_INFO("       tap_esc stop");
 	PX4_INFO("       tap_esc status");
 }

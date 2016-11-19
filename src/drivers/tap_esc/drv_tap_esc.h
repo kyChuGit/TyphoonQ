@@ -56,6 +56,9 @@
 		0xB8, 0x5F, 0x91, 0x76\
 	}
 
+#define TAP_ESC_ModeOpenLoop 0
+#define TAP_ESC_ModeClosedLoop 1
+
 #define TAP_ESC_MAX_PACKET_LEN 20
 #define TAP_ESC_MAX_MOTOR_NUM 8
 

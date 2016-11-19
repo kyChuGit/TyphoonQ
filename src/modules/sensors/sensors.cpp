@@ -957,15 +957,15 @@ Sensors::parameters_update()
 	param_get(_parameter_handles.diff_pres_offset_pa, &(_parameters.diff_pres_offset_pa));
 	param_get(_parameter_handles.diff_pres_analog_scale, &(_parameters.diff_pres_analog_scale));
 
-	/* scaling of ADC ticks to battery voltage */
-	if (param_get(_parameter_handles.battery_voltage_scaling, &(_parameters.battery_voltage_scaling)) != OK) {
-		PX4_WARN("%s", paramerr);
-
-	} else if (_parameters.battery_voltage_scaling < 0.0f) {
+//	/* scaling of ADC ticks to battery voltage */
+//	if (param_get(_parameter_handles.battery_voltage_scaling, &(_parameters.battery_voltage_scaling)) != OK) {
+//		PX4_WARN("%s", paramerr);
+//
+//	} else if (_parameters.battery_voltage_scaling < 0.0f) {
 		/* apply scaling according to defaults if set to default */
 		_parameters.battery_voltage_scaling = (3.3f / 4096);
 		param_set(_parameter_handles.battery_voltage_scaling, &_parameters.battery_voltage_scaling);
-	}
+//	}
 
 	/* scaling of ADC ticks to battery current */
 	if (param_get(_parameter_handles.battery_current_scaling, &(_parameters.battery_current_scaling)) != OK) {
@@ -999,6 +999,8 @@ Sensors::parameters_update()
 #elif defined (CONFIG_ARCH_BOARD_SITL)
 		_parameters.battery_v_div = 10.177939394f;
 #elif defined (CONFIG_ARCH_BOARD_TAP_V1)
+		_parameters.battery_v_div = 9.0f;
+#elif defined (CONFIG_ARCH_BOARD_PX4FMU_V5)
 		_parameters.battery_v_div = 9.0f;
 #else
 		/* ensure a missing default trips a low voltage lockdown */
@@ -1820,9 +1822,9 @@ Sensors::adc_poll(struct sensor_combined_s &raw)
 						updated_battery = true;
 					}
 
-				} else if (ADC_BATTERY_CURRENT_CHANNEL == buf_adc[i].am_channel) {
-					bat_current_a = ((buf_adc[i].am_data * _parameters.battery_current_scaling)
-							 - _parameters.battery_current_offset) * _parameters.battery_a_per_v;
+//				} else if (ADC_BATTERY_CURRENT_CHANNEL == buf_adc[i].am_channel) {
+//					bat_current_a = ((buf_adc[i].am_data * _parameters.battery_current_scaling)
+//							 - _parameters.battery_current_offset) * _parameters.battery_a_per_v;
 
 #ifdef ADC_AIRSPEED_VOLTAGE_CHANNEL
 

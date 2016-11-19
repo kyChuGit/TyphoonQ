@@ -1,10 +1,10 @@
 include(nuttx/px4_impl_nuttx)
 
-px4_nuttx_configure(HWCLASS m7 CONFIG nsh ROMFS y ROMFSROOT bat_common)
+px4_nuttx_configure(HWCLASS m7 CONFIG nsh ROMFS y ROMFSROOT tyq_common)
 
 set(CMAKE_TOOLCHAIN_FILE ${PX4_SOURCE_DIR}/cmake/toolchains/Toolchain-arm-none-eabi.cmake)
 
-set(config_uavcan_num_ifaces 2)
+#set(config_uavcan_num_ifaces 2)
 
 set(config_module_list
 	#
@@ -18,14 +18,14 @@ set(config_module_list
 	drivers/px4fmu
 	drivers/boards/px4fmu-v5
 	drivers/rgbled_pwm
-	drivers/mpu6000
+	#drivers/mpu6000
 	drivers/mpu6500
-	drivers/mpu9250
-	drivers/hmc5883
+	#drivers/mpu9250
+	#drivers/hmc5883
 	drivers/ist8310
 	drivers/ms5611
-	drivers/mb12xx
-	drivers/srf02
+	#drivers/mb12xx
+	#drivers/srf02
 	drivers/sf0x
 	drivers/ll40ls
 	drivers/trone
@@ -82,7 +82,7 @@ set(config_module_list
 	modules/navigator
 	modules/mavlink
 	modules/gpio_led
-	modules/uavcan
+	#modules/uavcan
 	modules/land_detector
 
 	#
@@ -157,7 +157,7 @@ set(config_module_list
 	#examples/math_demo
 	# Tutorial code from
 	# https://px4.io/dev/px4_simple_app
-	examples/px4_simple_app
+	#examples/px4_simple_app
 
 	# Tutorial code from
 	# https://px4.io/dev/daemon
@@ -181,8 +181,8 @@ set(config_extra_builtin_cmds
 	)
 
 set(config_extra_libs
-	uavcan
-	uavcan_stm32_driver
+#	uavcan
+#	uavcan_stm32_driver
 	)
 
 set(config_io_extra_libs
