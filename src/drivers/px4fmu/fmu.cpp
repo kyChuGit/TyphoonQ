@@ -933,10 +933,11 @@ PX4FMU::cycle()
 		RF_RADIO_POWER_CONTROL(true);
 #endif
 		_vehicle_cmd_sub = orb_subscribe(ORB_ID(vehicle_command));
-		// dsm_init sets some file static variables and returns a file descriptor
-		_rcs_fd = dsm_init(RC_SERIAL_PORT);
-		// assume SBUS input
-		sbus_config(_rcs_fd, false);
+//		// dsm_init sets some file static variables and returns a file descriptor
+//		_rcs_fd = dsm_init(RC_SERIAL_PORT);
+//		// assume SBUS input
+//		sbus_config(_rcs_fd, false);
+		_rcs_fd = st24_init(RC_SERIAL_PORT);
 #ifdef GPIO_PPM_IN
 		// disable CPPM input by mapping it away from the timer capture input
 		px4_arch_unconfiggpio(GPIO_PPM_IN);
@@ -1295,7 +1296,7 @@ PX4FMU::cycle()
 	}
 
 	// read all available data from the serial RC input UART
-	int newBytes = ::read(_rcs_fd, &_rcs_buf[0], SBUS_BUFFER_SIZE);
+	int newBytes = ::read(_rcs_fd, &_rcs_buf[0], ST24_BUFFER_SIZE);
 
 	switch (_rc_scan_state) {
 	case RC_SCAN_SBUS:
@@ -2605,32 +2606,32 @@ PX4FMU::dsm_bind_ioctl(int dsmMode)
 namespace
 {
 
-void
-bind_spektrum()
-{
-	int	 fd;
-
-	fd = open(PX4FMU_DEVICE_PATH, O_RDWR);
-
-	if (fd < 0) {
-		errx(1, "open fail");
-	}
-
-	if (true) {
-		PX4_INFO("bind_Spektrum RX");
-
-		/* specify 11ms DSMX. RX will automatically fall back to 22ms or DSM2 if necessary */
-		if (ioctl(fd, DSM_BIND_START, DSMX8_BIND_PULSES)) {
-			PX4_ERR("binding failed.");
-		}
-
-	} else {
-		PX4_WARN("system armed, bind request rejected");
-	}
-
-	close(fd);
-
-}
+//void
+//bind_spektrum()
+//{
+//	int	 fd;
+//
+//	fd = open(PX4FMU_DEVICE_PATH, O_RDWR);
+//
+//	if (fd < 0) {
+//		errx(1, "open fail");
+//	}
+//
+//	if (true) {
+//		PX4_INFO("bind_Spektrum RX");
+//
+//		/* specify 11ms DSMX. RX will automatically fall back to 22ms or DSM2 if necessary */
+//		if (ioctl(fd, DSM_BIND_START, DSMX8_BIND_PULSES)) {
+//			PX4_ERR("binding failed.");
+//		}
+//
+//	} else {
+//		PX4_WARN("system armed, bind request rejected");
+//	}
+//
+//	close(fd);
+//
+//}
 
 enum PortMode {
 	PORT_MODE_UNSET = 0,
@@ -3074,7 +3075,9 @@ fmu_main(int argc, char *argv[])
 	const char *verb = argv[1];
 
 	if (!strcmp(verb, "bind")) {
-		bind_spektrum();
+//		bind_spektrum();
+		if(st24_bind(RC_SERIAL_PORT) != true)
+			PX4_ERR("binding failed.");
 		exit(0);
 	}
 

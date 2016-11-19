@@ -2,8 +2,10 @@
 #
 # Standard startup script for TyphoonQ.
 #
-fmu i2c 1 400000
-fmu i2c 2 400000
+#fmu i2c 1 400000
+#fmu i2c 2 400000
+fmu i2c 3 400000
+#fmu i2c 4 400000
 
 if adc start
 then

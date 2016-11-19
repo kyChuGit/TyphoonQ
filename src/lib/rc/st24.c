@@ -41,10 +41,15 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <termios.h>
+
 #include "st24.h"
 
 #include <fcntl.h>
 #include <px4_defines.h>
+#include <px4_config.h>
+#include <drivers/boards/px4fmu-v5/board_config.h>
 
 enum ST24_DECODE_STATE {
 	ST24_DECODE_STATE_UNSYNCED = 0,
@@ -258,38 +263,70 @@ int st24_decode(uint8_t byte, uint8_t *rssi, uint8_t *lost_count, uint16_t *chan
 	return ret;
 }
 
+int st24_config(int fd)
+{
+// already opened in fmu.cpp
+//#ifdef RF_RADIO_POWER_CONTROL
+//	// power radio on (no hw in TyphoonQ)
+//	RF_RADIO_POWER_CONTROL(true);
+//#endif /* RF_RADIO_POWER_CONTROL */
+
+	int ret = -1;
+
+	if (fd >= 0) {
+
+		struct termios t;
+
+		/* 115200bps, no parity, one stop bit */
+		tcgetattr(fd, &t);
+		cfsetspeed(&t, 115200);
+		t.c_cflag &= ~(CSTOPB | PARENB);
+		tcsetattr(fd, TCSANOW, &t);
+
+		ret = 0;
+
+		_decode_state = ST24_DECODE_STATE_UNSYNCED;
+	}
+
+	return ret;
+}
+
+void st24_proto_init(void)
+{
+}
+
 int st24_init(const char *device)
 {
 	if(_st24_fd < 0)
 	{
-		_st24_fd = open(device, O_RDWR | O_NONBLOCK);
+		_st24_fd = open(device, O_RDONLY | O_NONBLOCK);
 	}
 	if(_st24_fd < 0)
 	{
-		PX4_ERR("open st24 uart failed.");
+		PX4_ERR("open st24 uart failed. %d", _st24_fd);
 		return -1;
 	}
+	st24_proto_init();
+	st24_config(_st24_fd);
 	return _st24_fd;
 }
 
 bool st24_bind(const char *device)
 {
-	if(_st24_fd < 0)
+	int fd = open(device, O_RDWR);
+	if(fd < 0)
 	{
-		_st24_fd = open(device, O_RDWR | O_NONBLOCK);
-	}
-	if(_st24_fd < 0)
-	{
-		PX4_ERR("open st24 uart failed.");
+		errx(1, "open st24 uart failed");
 		return false;
 	}
-	unsigned char bind_buf[11] = {0x55, 0x55, 0x08, 0x04, 0x0, 0x0, 'B', 'I', 'N', 'D', 0};
+	unsigned char bind_buf[11] = {0x55, 0x55, 0x8, 0x4, 0x0, 0x0, 'B', 'I', 'N', 'D', 0};
 	bind_buf[10] = st24_common_crc8(&bind_buf[2], 8);
-	int ret = write(_st24_fd, bind_buf, 11);
-	if(ret < 0)
+	if(write(fd, bind_buf, 11) < 0)
 	{
-		PX4_ERR("Write st24 uart failed.");
+		PX4_ERR("write st24 uart failed");
+		close(fd);
 		return false;
 	}
-	return  true;
+	close(fd);
+	return true;
 }

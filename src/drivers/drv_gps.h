@@ -48,7 +48,7 @@
 #include "drv_orb_dev.h"
 
 #ifndef GPS_DEFAULT_UART_PORT
-#define GPS_DEFAULT_UART_PORT "/dev/ttyS3"
+#define GPS_DEFAULT_UART_PORT "/dev/ttyS0"
 #endif
 
 typedef enum {
