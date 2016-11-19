@@ -43,6 +43,9 @@
 #include <stdio.h>
 #include "st24.h"
 
+#include <fcntl.h>
+#include <px4_defines.h>
+
 enum ST24_DECODE_STATE {
 	ST24_DECODE_STATE_UNSYNCED = 0,
 	ST24_DECODE_STATE_GOT_STX1,
@@ -73,6 +76,7 @@ const char *decode_states[] = {"UNSYNCED",
 
 static enum ST24_DECODE_STATE _decode_state = ST24_DECODE_STATE_UNSYNCED;
 static uint8_t _rxlen;
+static int _st24_fd = -1;
 
 static ReceiverFcPacket _rxpacket;
 
@@ -252,4 +256,26 @@ int st24_decode(uint8_t byte, uint8_t *rssi, uint8_t *lost_count, uint16_t *chan
 	}
 
 	return ret;
+}
+
+bool st24_bind(const char *device)
+{
+	if(_st24_fd < 0)
+	{
+		_st24_fd = open(device, O_RDWR | O_NONBLOCK);
+	}
+	if(_st24_fd < 0)
+	{
+		PX4_ERR("open st24 uart failed.");
+		return false;
+	}
+	unsigned char bind_buf[11] = {0x55, 0x55, 0x08, 0x04, 0x0, 0x0, 'B', 'I', 'N', 'D', 0};
+	bind_buf[10] = st24_common_crc8(&bind_buf[2], 8);
+	int ret = write(_st24_fd, bind_buf, 11);
+	if(ret < 0)
+	{
+		PX4_ERR("Write st24 uart failed.");
+		return false;
+	}
+	return  true;
 }
