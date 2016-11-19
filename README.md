@@ -32,5 +32,6 @@ This repository contains code supporting these boards:
   * FMUv2.x ([Pixhawk](http://dev.px4.io/hardware-pixhawk.html) and [Pixfalcon](http://dev.px4.io/hardware-pixfalcon.html))
   * FMUv3.x ([Pixhawk 2](http://dev.px4.io/hardware-pixhawk.html))
   * FMUv4.x (Pixhawk X and [Pixracer](http://dev.px4.io/hardware-pixracer.html))
+  * FMUv5.x (ARM Cortex M7, future Pixhawk)
   * AeroCore (v1 and v2)
   * STM32F4Discovery (basic support) [Tutorial](https://pixhawk.org/modules/stm32f4discovery)
