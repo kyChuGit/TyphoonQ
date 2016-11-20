@@ -1,0 +1,13 @@
+cmake file:
+	systemcmds/mixer
+	modules/systemlib/mixer
+
+rc.interface:
+line 24: mixer load /dev/pwm_output0 /etc/mixers/$MIXER.main.mix
+
+systemcmds/mixer:
+usage:
+	mixer load <device> <filename>
+	mixer append <device> <filename>
+
+mixer_main -> load -> load_mixer_file -> px4_ioctl(..., MIXERIOCLOADBUF, ...)
