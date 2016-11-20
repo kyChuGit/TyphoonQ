@@ -1,0 +1,21 @@
+cmake file:
+	systemcmds/param
+	modules/param
+
+rcS:
+line82: param select $PARAM_FILE (/fs/microsd/params or /fs/mtd_params)
+line83: param load
+...     param reset
+...     param compare SYS_AUTOSTART 0
+...     param set
+...     param reset_nostart RC*
+...     param save
+
+rc.mc_default:
+...     param set ...
+
+systemcmds/param/param.c:
+param usage:
+	load, import, show, set, compare, index, index_used, greater, select, save, reset
+
+save -> do_save(const char *param_file_name)
