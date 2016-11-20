@@ -117,7 +117,7 @@ usage(const char *reason)
 static int
 load(const char *devname, const char *fname, bool append)
 {
-	// sleep a while to ensure device has been set up
+	// sleep a while to ensure device has been set up (20ms)
 	usleep(20000);
 
 	int dev;
