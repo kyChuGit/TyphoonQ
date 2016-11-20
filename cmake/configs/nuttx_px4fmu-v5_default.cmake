@@ -30,7 +30,7 @@ set(config_module_list
 	drivers/ll40ls
 	drivers/trone
 	drivers/gps
-	drivers/pwm_out_sim
+	#drivers/pwm_out_sim
 	drivers/hott
 	drivers/hott/hott_telemetry
 	drivers/hott/hott_sensors
@@ -48,7 +48,7 @@ set(config_module_list
 	drivers/bst
 	drivers/snapdragon_rc_pwm
 	drivers/lis3mdl
-	drivers/bmp280
+	#drivers/bmp280
 ## BMA DEPENCANCY	drivers/bma180
 ## BMA DEPENCANCY   	drivers/bmi160
 	drivers/tap_esc
@@ -157,7 +157,7 @@ set(config_module_list
 	#examples/math_demo
 	# Tutorial code from
 	# https://px4.io/dev/px4_simple_app
-	examples/px4_simple_app
+	#examples/px4_simple_app
 
 	# Tutorial code from
 	# https://px4.io/dev/daemon
