@@ -17,6 +17,8 @@ param set MAV_TYPE 13
 param set MC_YAWRATE_P 0.12
 param set CAL_MAG0_ROT 6
 
+echo "use mixer 6001_hexa_x"
+
 if tap_esc start -d /dev/ttyS4 -n 6
 then
 fi

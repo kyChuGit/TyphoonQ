@@ -12,21 +12,22 @@ then
 	#
 
 	# Use the mixer file
-	set MIXER_FILE /etc/mixers/$MIXER.main.mix
+	set MIXER_FILE /etc/mixers/${MIXER}.main.mix
 
-	set OUTPUT_DEV /dev/pwm_output0
+	#set default output_dev: tap_esc
+	set OUTPUT_DEV /dev/tap_esc
 
-	if [ $OUTPUT_MODE == tap_esc ]
+	if [ ${OUTPUT_MODE} == tap_esc ]
 	then
 		set OUTPUT_DEV /dev/tap_esc
 	fi
 
 	if mixer load $OUTPUT_DEV $MIXER_FILE
 	then
-		echo "INFO  [init] Mixer: $MIXER_FILE on $OUTPUT_DEV"
+		echo "INFO  [init] Mixer: ${MIXER_FILE} on ${OUTPUT_DEV}"
 	else
-		echo "ERROR [init] Error loading mixer: $MIXER_FILE"
-		echo "ERROR:[init] Could not load mixer: $MIXER_FILE" >> $LOG_FILE
+		echo "ERROR [init] Error loading mixer: ${MIXER_FILE}"
+		echo "ERROR:[init] Could not load mixer: ${MIXER_FILE}" >> $LOG_FILE
 		tone_alarm $TUNE_ERR
 	fi
 

@@ -223,7 +223,7 @@ fi
 # Set default output if not set
 #
 
-set OUTPUT_MODE fmu
+set OUTPUT_MODE tap_esc
 
 #
 # Multicopters setup
