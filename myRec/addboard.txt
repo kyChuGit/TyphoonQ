@@ -1,0 +1,9 @@
+add board atest-v1
+
+1,cmake/configs/nuttx_atest-v1_default.cmake
+2,nuttx-configs/atest-v1/...
+3,Images/atest-v1.prototype (/Tools/px_mkfw.py)
+4,src/drivers/boards/atest-v1/... (/src/platforms/px4_config.h)
+5,git add ./
+[6,make distclean]
+7,make atest-v1_default
