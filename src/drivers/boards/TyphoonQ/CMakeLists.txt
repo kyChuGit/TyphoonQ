@@ -32,7 +32,7 @@
 #
 ############################################################################
 px4_add_module(
-	MODULE drivers__boards__px4fmu-v5
+	MODULE drivers__boards__TyphoonQ
 	COMPILE_FLAGS
 		-Os
 	SRCS
