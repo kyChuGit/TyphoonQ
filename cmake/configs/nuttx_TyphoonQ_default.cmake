@@ -16,7 +16,7 @@ set(config_module_list
 #NOT ON HW	drivers/stm32/tone_alarm
 	drivers/led
 	drivers/px4fmu
-	drivers/boards/px4fmu-v5
+	drivers/boards/TyphoonQ
 	drivers/rgbled_pwm
 	#drivers/mpu6000
 	drivers/mpu6500
