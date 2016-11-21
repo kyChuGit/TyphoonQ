@@ -56,6 +56,8 @@ __EXPORT int px4_simple_app_main(int argc, char *argv[]);
 
 int px4_simple_app_main(int argc, char *argv[])
 {
+/* ----- test 1 ----- */
+
 //	PX4_INFO("Hello Sky!, %8.4f", 0.333);
 //
 //	/* subscribe to sensor_combined topic */
@@ -126,27 +128,44 @@ int px4_simple_app_main(int argc, char *argv[])
 
 //	PX4_INFO("exiting");
 
-	bool updated = false;
-	struct battery_status_s _battery_status;	/**< battery status */
-	/* subscribe to sensor_combined topic */
-	int battery_sub_fd = orb_subscribe(ORB_ID(battery_status));
-	/* limit the update rate to 5 Hz */
-	orb_set_interval(battery_sub_fd, 200);
-	memset(&_battery_status, 0, sizeof(_battery_status));
+/* ----- test 2 ----- */
 
-	int i = 5;
-	while(i)
+//	bool updated = false;
+//	struct battery_status_s _battery_status;	/**< battery status */
+//	/* subscribe to sensor_combined topic */
+//	int battery_sub_fd = orb_subscribe(ORB_ID(battery_status));
+//	/* limit the update rate to 5 Hz */
+//	orb_set_interval(battery_sub_fd, 200);
+//	memset(&_battery_status, 0, sizeof(_battery_status));
+//
+//	int i = 5;
+//	while(i)
+//	{
+//		orb_check(battery_sub_fd, &updated);
+//		if(updated)
+//		{
+//			orb_copy(ORB_ID(battery_status), battery_sub_fd, &_battery_status);
+//			printf("VOLT : %2.6f \n", (double)_battery_status.voltage_v);
+//			i --;
+//		}
+//		usleep(1000);
+//	}
+//	orb_unsubscribe(battery_sub_fd);
+
+/* ----- test 3 ----- */
+	const char *device = "/dev/ttyACM0";
+	int _cdc_fd = open(device, O_RDWR | O_NOCTTY);
+	if(_cdc_fd < 0)
+		errx(1, "open cdc failed");
+	int ret = 0, i = 10;
+	while(i --)
 	{
-		orb_check(battery_sub_fd, &updated);
-		if(updated)
-		{
-			orb_copy(ORB_ID(battery_status), battery_sub_fd, &_battery_status);
-			printf("VOLT : %2.6f \n", (double)_battery_status.voltage_v);
-			i --;
-		}
-		usleep(1000);
+		ret = write(_cdc_fd, "cdc_out\n", 7);
+		if(ret < 0)
+			errx(1, "write failed");
+		else
+			usleep(100000);
 	}
-	orb_unsubscribe(battery_sub_fd);
 
 	return 0;
 }
