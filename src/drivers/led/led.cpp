@@ -41,6 +41,7 @@
 #include <drivers/device/device.h>
 #include <drivers/drv_led.h>
 #include <stdio.h>
+#include <fcntl.h>
 
 /*
  * Ideally we'd be able to get these from up_internal.h,
@@ -69,6 +70,8 @@ public:
 	virtual int		init();
 	virtual int		ioctl(device::file_t *filp, int cmd, unsigned long arg);
 };
+
+extern "C" __EXPORT int led_test_main(int argc, char *argv[]);
 
 LED::LED() :
 #ifdef __PX4_NUTTX
@@ -144,4 +147,46 @@ drv_led_start(void)
 			gLED->init();
 		}
 	}
+}
+
+namespace led_test
+{
+	int _led_fd = -1;
+	int led_start(void);
+	bool led_run(void);
+
+	int led_start(void)
+	{
+		drv_led_start();
+		if (gLED != nullptr)
+			_led_fd = open(LED0_DEVICE_PATH, O_RDWR);
+		return _led_fd;
+	}
+	bool led_run(void)
+	{
+		int ret;
+		uint8_t i = 10;
+		while(i --)
+		{
+			ret = ioctl(_led_fd, LED_TOGGLE, 0);
+			if(ret < 0)
+				return false;
+			usleep(200000);
+		}
+		return true;
+	}
+}
+
+int led_test_main(int argc, char *argv[])
+{
+	if(led_test::led_start())
+	{
+		if(!led_test::led_run())
+			errx(1, "run err");
+		else
+			errx(0, "run ok");
+	}
+	else
+		errx(1, "open err");
+	exit(0);
 }

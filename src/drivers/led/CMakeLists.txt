@@ -32,7 +32,11 @@
 ############################################################################
 px4_add_module(
 	MODULE drivers__led
+	MAIN led_test
+	STACK_MAIN 1200
 	COMPILE_FLAGS
+		-Weffc++
+		-Os
 	SRCS
 		led.cpp
 	DEPENDS
