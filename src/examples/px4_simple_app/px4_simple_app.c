@@ -154,18 +154,23 @@ int px4_simple_app_main(int argc, char *argv[])
 
 /* ----- test 3 ----- */
 	const char *device = "/dev/ttyACM0";
+	char *buf = "test_string/n";
 	int _cdc_fd = open(device, O_RDWR | O_NOCTTY);
 	if(_cdc_fd < 0)
 		errx(1, "open cdc failed");
-	int ret = 0, i = 10;
+	int ret = 0, i = 1;
 	while(i --)
 	{
-		ret = write(_cdc_fd, "cdc_out\n", 7);
+		ret = write(_cdc_fd, buf, sizeof(buf));
 		if(ret < 0)
+		{
+			close(_cdc_fd);
 			errx(1, "write failed");
+		}
 		else
 			usleep(100000);
 	}
 
+	close(_cdc_fd);
 	return 0;
 }
