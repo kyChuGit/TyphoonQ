@@ -41,7 +41,7 @@
  */
 
 #include <px4_config.h>
-#include <drivers/boards/px4fmu-v5/board_config.h>
+#include <board_config.h>
 #include <drivers/device/device.h>
 
 #include <sys/types.h>

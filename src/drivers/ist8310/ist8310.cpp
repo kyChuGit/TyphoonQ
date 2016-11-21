@@ -58,7 +58,7 @@
 #include <nuttx/wqueue.h>
 #include <nuttx/clock.h>
 
-#include <drivers/boards/px4fmu-v5/board_config.h>
+#include <board_config.h>
 
 #include <systemlib/perf_counter.h>
 #include <systemlib/err.h>

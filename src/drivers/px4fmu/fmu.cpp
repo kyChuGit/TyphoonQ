@@ -61,7 +61,7 @@
 #include <drivers/drv_gpio.h>
 #include <drivers/drv_hrt.h>
 
-#include <drivers/boards/px4fmu-v5/board_config.h>
+#include <board_config.h>
 
 #include <systemlib/px4_macros.h>
 #include <systemlib/systemlib.h>

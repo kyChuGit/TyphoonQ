@@ -49,7 +49,7 @@
 #include <fcntl.h>
 #include <px4_defines.h>
 #include <px4_config.h>
-#include <drivers/boards/px4fmu-v5/board_config.h>
+#include <board_config.h>
 
 enum ST24_DECODE_STATE {
 	ST24_DECODE_STATE_UNSYNCED = 0,
