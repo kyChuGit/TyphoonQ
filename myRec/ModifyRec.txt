@@ -1,0 +1,11 @@
+2016/11/21
+1,led配置函数修改:
+	drivers/boards/TyphoonQ/px4fmu_led.c
+	drivers/boards/TyphoonQ/board_config.h
+直接配置IO口
+GPIO_LED_RED/BLUE/GREEN的默认电平修改为:
+RED:GPIO_OUTPUT_SET
+BLUE:GPIO_OUTPUT_CLEAR
+GREEN:GPIO_OUTPUT_CLEAR
+2,ram使用率报警,获取到的利用率为1(100%).
+	modules/commander/commander.cpp
