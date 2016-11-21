@@ -46,6 +46,7 @@
 #include "stm32_gpio.h"
 #include "board_config.h"
 
+#include <stdio.h>
 #include <nuttx/board.h>
 #include <arch/board/board.h>
 
@@ -83,52 +84,30 @@ static uint32_t g_ledmap[] = {
 	GPIO_LED_GREEN,   // Indexed by LED_GREEN
 	GPIO_LED_BLUE,    // Indexed by LED_BLUE
 	GPIO_LED_RED,     // Indexed by LED_RED, LED_AMBER
-	0,                // Indexed by LED_SAFETY
 };
 
 #endif
 
 __EXPORT void led_init(void)
 {
-	/* Configure LED GPIOs for output */
-	for (size_t l = 0; l < (sizeof(g_ledmap) / sizeof(g_ledmap[0])); l++) {
-		if (g_ledmap[l]) {
-			stm32_configgpio(g_ledmap[l]);
-		}
-	}
-}
-
-static void phy_set_led(int led, bool state)
-{
-	/* Drive Low to switch on */
-
-	if (g_ledmap[led]) {
-		stm32_gpiowrite(g_ledmap[led], !state);
-	}
-}
-
-static bool phy_get_led(int led)
-{
-
-	if (g_ledmap[led]) {
-		return stm32_gpioread(g_ledmap[led]);
-	} return false;
+	stm32_configgpio(GPIO_LED_GREEN);
+	stm32_configgpio(GPIO_LED_BLUE);
+	stm32_configgpio(GPIO_LED_RED);
 }
 
 __EXPORT void led_on(int led)
 {
-	phy_set_led(xlat(led), true);
+	stm32_gpiowrite(g_ledmap[led], false);
 }
 
 __EXPORT void led_off(int led)
 {
-	phy_set_led(xlat(led), false);
+	stm32_gpiowrite(g_ledmap[led], true);
 }
 
 __EXPORT void led_toggle(int led)
 {
-
-	phy_set_led(xlat(led), !phy_get_led(xlat(led)));
+	stm32_gpiowrite(g_ledmap[led], !stm32_gpioread(g_ledmap[led]));
 }
 
 #ifdef CONFIG_ARCH_LEDS

@@ -168,6 +168,7 @@ namespace led_test
 		uint8_t i = 10;
 		while(i --)
 		{
+			ioctl(_led_fd, LED_TOGGLE, 2);
 			ret = ioctl(_led_fd, LED_TOGGLE, 0);
 			if(ret < 0)
 				return false;
