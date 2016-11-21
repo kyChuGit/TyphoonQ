@@ -8,4 +8,9 @@ RED:GPIO_OUTPUT_SET
 BLUE:GPIO_OUTPUT_CLEAR
 GREEN:GPIO_OUTPUT_CLEAR
 2,ram使用率报警,获取到的利用率为1(100%).
-	modules/commander/commander.cpp
+	tog led:modules/commander/commander.cpp
+	cal ram:modules/load_mon/load_mon.cpp
+修改deconfig:
+reference to STM32F765xx，STM32F767xx.pdf p106 use SRAM1(368KB)
+	CONFIG_RAM_START=0x20010000 -> CONFIG_RAM_START=0x20020000
+	CONFIG_RAM_SIZE=245760 -> CONFIG_RAM_SIZE=376832
