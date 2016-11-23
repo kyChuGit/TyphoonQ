@@ -18,4 +18,6 @@ reference to STM32F765xx，STM32F767xx.pdf p106 use SRAM1(368KB)
 nuttx-configs/TyphoonQ/nsh/deconfig:
 	CONFIG_CDCACM_VENDORSTR="YUNEEC Elect"
 	CONFIG_CDCACM_PRODUCTSTR="YC TYQ v1.0"
-	
+4,QGroundControl连接问题
+ 1> USB CDC通讯正常
+ 

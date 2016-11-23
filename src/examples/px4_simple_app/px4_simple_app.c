@@ -154,14 +154,14 @@ int px4_simple_app_main(int argc, char *argv[])
 
 /* ----- test 3 ----- */
 	const char *device = "/dev/ttyACM0";
-	char *buf = "test_string/n";
+	char buf[] = "1234567890";
 	int _cdc_fd = open(device, O_RDWR | O_NOCTTY);
 	if(_cdc_fd < 0)
 		errx(1, "open cdc failed");
-	int ret = 0, i = 1;
+	int ret = 0, i = 10;
 	while(i --)
 	{
-		ret = write(_cdc_fd, buf, sizeof(buf));
+		ret = write(_cdc_fd, buf, sizeof(buf)/sizeof(buf[0]));
 		if(ret < 0)
 		{
 			close(_cdc_fd);
