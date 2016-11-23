@@ -1,0 +1,90 @@
+教程:http://blog.jobbole.com/78960/
+因为Git是分布式版本控制系统，所以需要填写用户名和邮箱作为一个标识:
+git config --global user.name "kyChu"
+git config --global user.email "hello.kychu@gmail.com"
+本地仓库：
+初始化为仓库:
+git init
+将文件添加到暂存区:
+git add readme.txt
+将文件提交到仓库:
+git commit -m "commit readme.txt"
+查看文件提交状态:
+git status
+查看文件修改的内容:
+git diff readme.txt
+查看文件修改记录:
+git log
+精简记录信息:
+git log --pretty=oneline
+版本回退:
+1)git reset --hard HEAD^
+2)git reset --hard HEAD^^
+20)git reset --hard HEAD~20
+通过版本号回退:
+获取修改版本号->git reflog
+回退->git reset --hard 版本号
+将readme.txt文件在工作区内的修改全部撤销(撤销到添加到暂存区的状态):
+git checkout -- readme.txt(注意:--不能少)
+
+远程仓库:
+第一次使用需要创建SSH Key,会在主目录下创建.ssh目录,目录下有id_rsa及id_rsa.pub两个文件:
+ssh-keygen -t rsa -C "hello.kychu@gmail.com"(id_rsa是私钥,不能泄露;id_rsa.pub是公钥,可以公开)
+在github中Add SSH Key,内容为id_rsa.pub中的内容
+关联本地仓库与远程仓库:
+git remote add origin https://github.com/WSCKY/kyChuRep.git
+推送本地内容到远程仓库:
+第一次(远程仓库为空):git push -u origin master
+以后:git push origin master
+推送分支dev:
+git push origin dev
+
+从远程仓库拉取:
+git clone https://github.com/WSCKY/kyChuRep.git
+创建dev分支:
+git checkout -b dev
+等价于=>
+git branch dev
+git checkout dev
+查看当前分支:
+git branch(当前分支前面会添加一个*)
+合并分支内容到master:
+git merge dev(默认是Fast-forward模式,会丢掉分支信息)
+git merge --no-ff -m "merge dev" dev(禁用Fast-forward模式,-m可以添加提示信息)
+删除分支:
+git branch -d dev
+删除远程分支 dev:
+git push --delete origin dev
+重命名本地分支:
+git branch -m devel develop
+删除没有与远程分支对应的本地分支:
+git fetch -p
+
+隐藏当前的工作现场:
+git stash
+查看工作现场:
+git stash list
+恢复工作现场:
+git stash apply(stash内容不删除)
+git stash pop(stash内容在恢复后删除)
+删除工作现场:
+git stash drop
+
+查看远程仓库信息:
+git remote
+查看详细信息:
+git remote -v
+
+将远程的分支创建到本地来:
+git checkout -b dev origin/dev
+本地dev分支与远程dev分支链接:
+git branch dev origin/dev
+拉取远程dev分支上的更新到本地合并:
+git pull
+
+拉取远程分支代码:
+git pull <远程主机名> <远程分支名>:<本地分支名>
+or
+1,git fetch origin <远程分支名>
+(使用 git branch -r 查看分支)
+2,git checkout -b <本地分支名> origin/<远程分支名>
