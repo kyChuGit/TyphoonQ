@@ -1893,7 +1893,7 @@ Mavlink::task_main(int argc, char *argv[])
 
 	/* start the MAVLink receiver */
 	MavlinkReceiver::receive_start(&_receive_thread, this);
-
+PX4_INFO("start the MAVLink receiver");
 	MavlinkOrbSubscription *param_sub = add_orb_subscription(ORB_ID(parameter_update));
 	uint64_t param_time = 0;
 	MavlinkOrbSubscription *status_sub = add_orb_subscription(ORB_ID(vehicle_status));

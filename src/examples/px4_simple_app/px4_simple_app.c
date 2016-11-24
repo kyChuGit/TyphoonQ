@@ -153,7 +153,7 @@ int px4_simple_app_main(int argc, char *argv[])
 //	orb_unsubscribe(battery_sub_fd);
 
 /* ----- test 3 ----- */
-	const char *device = "/dev/ttyACM0";
+	const char *device = "/dev/ttyS1";
 	char buf[] = "1234567890";
 	int _cdc_fd = open(device, O_RDWR | O_NOCTTY);
 	if(_cdc_fd < 0)
