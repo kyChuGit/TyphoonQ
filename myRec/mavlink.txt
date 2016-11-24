@@ -1,0 +1,19 @@
+mavlink_main -> start/stop/stop-all/status/stream/boot_complete
+start:
+ 1-> count instance;
+ 2-> start task with name:"mavlink_ifx"(x is instance id);
+ 3-> main -> Mavlink::start_helper;
+ 4-> sleep 500us per instance, exit.
+start_helper:
+ 1-> instance->task_main(argc, argv);
+task_main:
+ 1->
+	-b set baudrate(9600 - 1000000)
+	-r set datarate(10 - 10000000)
+	-d set device(e.g. /dev/ttyACM0 or /dev/ttyS1) & set protocol:SERIAL
+	-m set mode(custom/camera/onboard/osd/magic/config)
+	-x set ftp on
+ 2-> open port then flush stdout in case MAVLink is about to take it over(!!!)
+ 3-> Create a send mutex. if ftp on, Create a message buffer mutex
+ 4-> Initialize system properties
+ 5-> Start receive thread(in mavlink_receiver.cpp) -> MavlinkReceiver::start_helper -> MavlinkReceiver::receive_thread, it will start a thread with name "mavlink_rcv_ifx"
