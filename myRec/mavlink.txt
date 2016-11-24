@@ -17,3 +17,9 @@ task_main:
  3-> Create a send mutex. if ftp on, Create a message buffer mutex
  4-> Initialize system properties
  5-> Start receive thread(in mavlink_receiver.cpp) -> MavlinkReceiver::start_helper -> MavlinkReceiver::receive_thread, it will start a thread with name "mavlink_rcv_ifx"
+ 6-> update paramters ... set main loop delay ...
+ 7-> send the system version blindly:
+	send_autopilot_capabilites(mavlink_main.cpp) -> mavlink_msg_autopilot_version_send_struct(mavlink_msg_autopoilt_version.h) ->
+	_mav_finalize_message_chan_send(mavlink_helpers.h) -> _mavlink_send_uart(mavlink_helpers.h) ->
+	MAVLINK_SEND_UART_BYTES(mavlink_helpers.h, defined at mavlink_bridge_header.h) -> mavlink_send_uart_bytes(mavlink_main.cpp)
+ 8-> entry main loop

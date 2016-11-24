@@ -1,4 +1,4 @@
-add board atest-v1
+add board: e.g. atest-v1
 
 1,cmake/configs/nuttx_atest-v1_default.cmake
 2,nuttx-configs/atest-v1/...

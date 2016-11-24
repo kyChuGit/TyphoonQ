@@ -171,4 +171,3 @@ eg:
     OK表示检测成功；错误返回ERROR;否则则有根据的去设置errno;
 eg:
     ret = orb_priority(handle,&priority);
-
