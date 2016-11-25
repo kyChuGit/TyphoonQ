@@ -19,3 +19,8 @@ param usage:
 	load, import, show, set, compare, index, index_used, greater, select, save, reset
 
 save -> do_save(const char *param_file_name)
+
+...
+
+sensors.cpp:
+param_find -> param_find_internal -> string compare :param_info_base -> px4_parameters(in px4_parameters.c)
