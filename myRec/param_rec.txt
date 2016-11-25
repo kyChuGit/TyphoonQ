@@ -19,10 +19,11 @@ systemcmds/param/param.c:
 param usage:
 	load, import, show, set, compare, index, index_used, greater, select, save, reset
 
+select -> param_set_default_file -> update variable "param_user_file"
+
 load -> do_load(const char *param_file_name) -> open file -> param_load -> param_reset_all -> param_import_internal ->
 	bson_decoder_init_file(for init decoder !!!Incoming call back func <param_import_callback(...)>!!!) -> {tinyBSON} ->
 	bson_decoder_next (!!!it will call the callback and pass its results back!!!) -> param_import_callback(use func <param_set_internal(...)> to save param (name & value))
-
 
 save -> do_save(const char *param_file_name)
 
