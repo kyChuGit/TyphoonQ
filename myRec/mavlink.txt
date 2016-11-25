@@ -10,7 +10,7 @@ task_main:
  1->
 	-b set baudrate(9600 - 1000000)
 	-r set datarate(10 - 10000000)
-	-d set device(e.g. /dev/ttyACM0 or /dev/ttyS1) & set protocol:SERIAL
+	-d set device(e.g. /dev/ttyACM0 or /dev/ttyS1) && set protocol:SERIAL
 	-m set mode(custom/camera/onboard/osd/magic/config)
 	-x set ftp on
  2-> open port then flush stdout in case MAVLink is about to take it over(!!!)
@@ -23,3 +23,6 @@ task_main:
 	_mav_finalize_message_chan_send(mavlink_helpers.h) -> _mavlink_send_uart(mavlink_helpers.h) ->
 	MAVLINK_SEND_UART_BYTES(mavlink_helpers.h, defined at mavlink_bridge_header.h) -> mavlink_send_uart_bytes(mavlink_main.cpp)
  8-> entry main loop
+ 
+ 
+LL_APPEND(_mavlink_instances, this); -> add instance: bump the instance count while the instance is fully initialized.
