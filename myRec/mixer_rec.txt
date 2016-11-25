@@ -11,3 +11,12 @@ usage:
 	mixer append <device> <filename>
 
 mixer_main -> load -> load_mixer_file -> px4_ioctl(..., MIXERIOCLOADBUF, ...)
+
+
+
+
+del mixer/nsh file:
+1-> delete file
+2-> git add ./ && git commit -m "..."
+3-> make distclean
+4-> make TyphoonQ_default
