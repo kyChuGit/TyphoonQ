@@ -1,0 +1,2 @@
+2016/11/26 03:02
+mavlink & connect to QGroundControl
