@@ -34,6 +34,78 @@ set -> find param id according to name -> select param type -> get val -> save
 sensors.cpp:
 param_find -> param_find_internal -> string compare :param_info_base -> px4_parameters(in px4_parameters.c)
 
+create new parameter(s):
+file name: xxxparams.c (e.g. test_params.c)
+define parameters: PARAM_DEFINE_INT32/PARAM_DEFINE_FLOAT/PARAM_DEFINE_STRUCT
+two arguments: _name, _default (e.g. PARAM_DEFINE_INT32(MAV_SYS_ID, 1);)
+
+procedure of generate px4_parameters.c/h file:
+1, generate parameters: (YUNEEC_Firmware/CMakeLists.txt) -> px4_generate_parameters_xml(px4_base.cmake) -> parameters.xml
+cmake/common/px4_base.cmake: function(px4_generate_parameters_xml) -> ${PX4_SOURCE_DIR}/src/*params.c, so all of parameters come from file *params.c, be called by YUNEEC_Firmware/CMakeLists.txt;
+(e.g. ./modules/mc_pos_control/mc_pos_control_params.c, ./modules/ekf2/ekf2_params.c, ...)
+2, generate px4_parameters source: (src/modules/param/CMakeLists.txt) -> px4_generate_parameters_source(px4_base.cmake) -> px4_parameters.c/h
+src/modules/param/CMakeLists.txt: call function(px4_generate_parameters_source) in px4_base.cmake, use ${PX4_BINARY_DIR}/parameters.xml
+
+List of *params.c
+./modules/bottle_drop/bottle_drop_params.c
+./modules/local_position_estimator/params.c
+./modules/sdlog2/params.c
+./modules/segway/params.c
+./modules/mc_pos_control/mc_pos_control_params.c
+./modules/mc_att_control/mc_att_control_params.c
+./modules/fw_att_control/fw_att_control_params.c
+./modules/ekf2/ekf2_params.c
+./modules/mavlink/mavlink_params.c
+./modules/commander/commander_params.c
+./modules/systemlib/flashparams/flashparams.c
+./modules/systemlib/system_params.c
+./modules/systemlib/circuit_breaker_params.c
+./modules/systemlib/battery_params.c
+./modules/uavcan/uavcan_params.c
+./modules/vtol_att_control/tailsitter_params.c
+./modules/vtol_att_control/tiltrotor_params.c
+./modules/vtol_att_control/vtol_att_control_params.c
+./modules/vtol_att_control/standard_params.c
+./modules/fw_pos_control_l1/fw_pos_control_l1_params.c
+./modules/fw_pos_control_l1/mtecs/mTecs_params.c
+./modules/syslink/syslink_params.c
+./modules/sensors/sensor_params.c
+./modules/attitude_estimator_q/attitude_estimator_q_params.c
+./modules/controllib_test/test_params.c
+./modules/land_detector/land_detector_params.c
+./modules/navigator/navigator_params.c
+./modules/navigator/datalinkloss_params.c
+./modules/navigator/rtl_params.c
+./modules/navigator/gpsfailure_params.c
+./modules/navigator/geofence_params.c
+./modules/navigator/mission_params.c
+./modules/navigator/follow_target_params.c
+./modules/navigator/rcloss_params.c
+./modules/uavcanesc/uavcanesc_params.c
+./modules/logger/params.c
+./modules/uavcannode/uavcannode_params.c
+./systemcmds/tests/test_params.c
+./lib/launchdetection/launchdetection_params.c
+./lib/runway_takeoff/runway_takeoff_params.c
+./platforms/qurt/fc_addon/uart_esc/uart_esc_params.c
+./platforms/qurt/fc_addon/rc_receiver/rc_receiver_params.c
+./platforms/qurt/fc_addon/mpu_spi/mpu9x50_params.c
+./platforms/qurt/px4_layer/params.c
+./examples/rover_steering_control/params.c
+./examples/ekf_att_pos_estimator/ekf_att_pos_estimator_params.c
+./examples/mc_att_control_multiplatform/mc_att_control_params.c
+./examples/fixedwing_control/params.c
+./examples/subscriber/subscriber_params.c
+./examples/mc_pos_control_multiplatform/mc_pos_control_params.c
+./examples/attitude_estimator_ekf/attitude_estimator_ekf_params.c
+./drivers/camera_trigger/camera_trigger_params.c
+./drivers/px4io/px4io_params.c
+./drivers/gps/params.c
+./drivers/rgbled/rgbled_params.c
+./drivers/px4fmu/px4fmu_params.c
+./drivers/vmount/vmount_params.c
+./drivers/mkblctrl/mkblctrl_params.c
+
 
 BSON Description:
 BSON, short for Bin­ary JSON, is a bin­ary-en­coded seri­al­iz­a­tion of JSON-like doc­u­ments.
