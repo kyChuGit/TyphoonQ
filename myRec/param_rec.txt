@@ -46,7 +46,7 @@ cmake/common/px4_base.cmake: function(px4_generate_parameters_xml) -> ${PX4_SOUR
 2, generate px4_parameters source: (src/modules/param/CMakeLists.txt) -> px4_generate_parameters_source(px4_base.cmake) -> px4_parameters.c/h
 src/modules/param/CMakeLists.txt: call function(px4_generate_parameters_source) in px4_base.cmake, use ${PX4_BINARY_DIR}/parameters.xml
 
-List of *params.c
+List of *params.c (find -name *params.c):
 ./modules/bottle_drop/bottle_drop_params.c
 ./modules/local_position_estimator/params.c
 ./modules/sdlog2/params.c
