@@ -13,8 +13,8 @@ task_main:
 	-d set device(e.g. /dev/ttyACM0 or /dev/ttyS1) && set protocol:SERIAL
 	-m set mode(custom/camera/onboard/osd/magic/config)
 	-x set ftp on
- 2-> open port then flush stdout in case MAVLink is about to take it over(!!!)
- 3-> Create a send mutex. if ftp on, Create a message buffer mutex
+ 2-> flush stdout in case MAVLink is about to take it over(!!!) then open port(use mavlink_open_uart, it will wait for usb connection)
+ 3-> Create a send mutex. if ftp/forwarding on, Create a message buffer mutex
  4-> Initialize system properties
  5-> Start receive thread(in mavlink_receiver.cpp) -> MavlinkReceiver::start_helper -> MavlinkReceiver::receive_thread, it will start a thread with name "mavlink_rcv_ifx"
  6-> update paramters ... set main loop delay ...
