@@ -38,6 +38,8 @@ git remote add origin https://github.com/WSCKY/kyChuRep.git
 以后:git push origin master
 推送分支dev:
 git push origin dev
+强制推送:
+git push -f
 
 从远程仓库拉取:
 git clone https://github.com/WSCKY/kyChuRep.git
