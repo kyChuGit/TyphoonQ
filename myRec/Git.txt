@@ -90,3 +90,23 @@ or
 1,git fetch origin <远程分支名>
 (使用 git branch -r 查看分支)
 2,git checkout -b <本地分支名> origin/<远程分支名>
+
+git添加submodule:
+git submodule add https://github.com/WSCKY/subrep.git
+添加submodule并指定文件夹:
+git submodule add https://github.com/WSCKY/subrep.git submod
+
+更新submodule:
+父目录:git submodule foreach git pull
+submodule目录:git pull
+
+clone时直接clone整个项目:
+git clone https://github.com/WSCKY/RepForTest.git --recursive
+分步:git clone ... -> git submodule init -> git submodule update
+
+删除submodule (e.g. subrep):（不能直接删除）
+git rm --cached subrep
+rm -rf subrep
+modify .gitmodules(!!!)
+modify .git/config(!!!)
+commit ...
