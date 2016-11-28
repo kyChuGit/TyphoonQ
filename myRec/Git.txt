@@ -41,6 +41,11 @@ git push origin dev
 强制推送:
 git push -f
 
+修改git远程仓库:
+方法1: git remote origin set-url [url]
+方法2: git remote rm origin -> git remote add origin [url]
+方法3: 修改config文件
+
 从远程仓库拉取:
 git clone https://github.com/WSCKY/kyChuRep.git
 创建dev分支:
